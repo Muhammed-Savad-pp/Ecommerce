@@ -1,0 +1,149 @@
+<%-  include("../layouts/header.ejs")  %>
+
+
+ 
+<%- include("../layouts/navbar.ejs") %>
+
+<section class="h-100 background-color; " style="background-color: #ecfdff;">
+  <div class="mask d-flex align-items-center h-100 gradient-custom-3">
+    <div class="container">
+      <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col-12 col-md-9 col-lg-7 col-xl-6" style="margin-top: 100px;">
+          <div class="card" style="border-radius: 15px; ">
+            <div class="card-body p-5">
+              <h2 class="text-uppercase text-center mb-5" style="color: #3b5d50;">Create an account</h2>
+
+              <% 
+                   if(typeof message !== 'undefined'){
+              %>
+                  <p style="color:red"><%=message %></p>
+              <%          
+                }
+                
+              %>
+
+              <form action="/register" method="post" onsubmit="return validateName()">
+
+                <div class="form-outline mb-4">
+                  <input type="text" name="name" id="name" class="form-control form-control-lg" />
+                  <label class="form-label" for="form3Example1cg">Your Name</label>
+                  <p id="nameError" style="color: red;"></p>
+                </div>
+
+                <div class="form-outline mb-4">
+                  <input type="email" name="email" id="email" class="form-control form-control-lg" />
+                  <label class="form-label" for="form3Example3cg">Your Email</label>
+                  <p id="emailError" style="color: red;"></p>
+                </div>
+
+                <div class="form-outline mb-4">
+                  <input type="text" name="mno" id="mno" class="form-control form-control-lg" />
+                  <label class="form-label" for="form3Example3cg">Your Phone No</label>
+                  <p id="mnoError" style="color: red;"></p>
+                </div>
+
+                <div class="form-outline mb-4">
+                  <input type="password" name="password" id="password" class="form-control form-control-lg" />
+                  <label class="form-label" for="form3Example4cg">Password</label>
+                  <p id="passwordError" style="color: red;"></p>
+                </div>
+
+                <div class="form-outline mb-4">
+                  <input type="password" name="conformPassword" id="form3Example4cdg" class="form-control form-control-lg" />
+                  <label class="form-label" for="form3Example4cdg">Repeat your password</label>
+                </div>
+
+               
+
+                <div class="d-flex justify-content-center">
+                  <button type="submit" 
+                    class="genric-btn success-border circle "  >Verify Email</button>
+                  </div>
+
+                <p class="text-center text-muted mt-5 mb-0">Have already an account? <a href="/login"
+                    class="fw-bold text-body"><u>Login here</u></a></p>
+
+              </form>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+
+  function validateName(){
+    
+    // name validaion
+    var nameInput = document.getElementById('name').value.trim();
+    var emailInput = document.getElementById('email').value.trim();
+    var phoneInput = document.getElementById('mno').value.trim();
+    var passwordInput = document.getElementById('password').value.trim();
+
+
+    var nameRegex = /^[a-zA-Z\s]*$/;
+    var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    var phoneRegex = /^[6-9]\d{9}$/;
+    var passwordRegex = /^\d{5}$/;
+
+
+
+    var nameError = document.getElementById('nameError');
+    var emailError = document.getElementById('emailError');
+    var mnoError = document.getElementById('mnoError');
+    var passwordError = document.getElementById('passwordError') 
+
+    nameError.innerText = '';
+    emailError.innerText = '';
+    mnoError.innerText = '';
+    passwordError.innerText = '';
+
+    var isValid = true;
+
+
+    if(nameInput === ''){
+      nameError.innerText = 'Name cannot be empty';
+      return false;
+    }else if(!nameRegex.test(nameInput)){
+      nameError.innerText = 'Name can only contain letters and spaces'
+      return false;
+    }
+
+    if(emailInput === ''){
+      emailError.innerText = 'Email cannot be empty';
+      return false
+    }else if(!emailRegex.test(emailInput)){
+      emailError.innerText = 'Please enter a valid email address';
+      return false
+    }
+    
+    if(phoneInput === ''){
+      mnoError.innerText = 'Phone number cannot be empty';
+      return false;
+    }else if(!phoneRegex.test(phoneInput)){
+      mnoError.innerText = 'Please enter a valid phone number';
+      return false
+    }
+
+    if(passwordInput === ''){
+      passwordError.innerText = 'PLease fill the password ';
+      return false;
+    }else if(!passwordRegex.test(passwordInput)){
+      passwordError.innerText = 'Password must be 5 letters';
+      return false
+    }
+
+
+    return isValid
+    
+    
+  }
+
+
+
+</script>
+
+<%-  include("../layouts/footer.ejs")  %>

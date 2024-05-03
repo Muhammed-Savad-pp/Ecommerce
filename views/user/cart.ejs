@@ -1,0 +1,469 @@
+<%- include("../layouts/header.ejs") %>
+  <%- include("../layouts/navbar.ejs") %>
+
+    <section class="breadcrumb breadcrumb_bg">
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-lg-8">
+            <div class="breadcrumb_iner">
+              <div class="breadcrumb_iner_item">
+                <h2>Cart Products</h2>
+                <p>Home <span>-</span>Cart Products</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- breadcrumb start-->
+
+    <!--================Cart Area =================-->
+    <section class="cart_area padding_top">
+      <div class="container">
+        <div class="cart_inner">
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col">Product</th>
+                  <th scope="col">Price</th>
+                  <th scope="col">Quantity</th>
+                  <th scope="col">SubTotal</th>
+                </tr>
+              </thead>
+              <tbody>
+
+                <% if (cartsdata && cartsdata.product) { %>
+
+                  <% cartsdata.product.forEach(val=>{ %>
+
+                    <tr>
+                      <td>
+                        <div class="media">
+                          <div class="d-flex">
+                            <img src="<%= val.productId.image[0] %>" alt="" style="width: 100px; height: 100px;" />
+                          </div>
+                          <div class="media-body">
+                            <p>
+                              <%= val.productId.pname %>
+                            </p>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <h5 id="price_<%= val.productId._id %>">
+                          ₹<%= val.productId.price %>
+                        </h5>
+
+                      </td>
+                      <td>
+
+                        <div class="product_count ">
+                          <span class="increment-btn mx-1" onclick="incrementQuantity('<%= val.productId._id %>')">
+                            <i class="ti-angle-up"></i>
+                          </span>
+                          <input class="input-number" id="quantity_<%= val.productId._id %>" type="text"
+                            value="<%= val.quantity %>" min="1" max="<%= val.productId.quantity%>"
+                            data-product-id="<%= val.productId._id %>" readonly>
+                          <span class="decrement-btn mx-1" onclick="decrementQuantity('<%= val.productId._id %>')">
+                            <i class="ti-angle-down"></i>
+                          </span>
+                        </div>
+                      </td>
+
+                      <td>
+                        <h5 class="subtotal" data-product-id="<%= val.productId._id %>">
+                          ₹ <%= val.quantity * val.productId.price %>.00
+                        </h5>
+                      </td>
+
+                      <td>
+                        <button style="border: none; background-color: white; color: red;"
+                          onclick="removecart('<%= val.productId._id %>')"><i class="fa-solid fa-trash"></i></button>
+                      </td>
+                    </tr>
+                    <% }); %>
+                      <% } %>
+
+
+                        <tr>
+                          <td></td>
+                          <td></td>
+
+
+                          <td>
+                            <h5 style="font-size: 20px;">TOTAL</h5>
+                          </td>
+                          <td>
+
+                            <h5 style="color: red; font-size: 20px;" id="totalAmount">
+
+                            </h5>
+                          </td>
+                        </tr>
+
+              </tbody>
+            </table>
+            <div class="checkout_btn_inner float-right">
+              <a class="btn_1" href="/shop">Continue Shopping</a>
+              <p id="checkoutButton" class="btn_1 checkout_btn">Proceed to checkout</p>
+            </div>
+          </div>
+        </div>
+    </section>
+    <!--================End Cart Area =================-->
+
+    <!--::footer_part start::-->
+    <footer class="footer_part">
+      <div class="container">
+        <div class="row justify-content-around">
+          <div class="col-sm-6 col-lg-2">
+            <div class="single_footer_part">
+              <h4>Top Products</h4>
+              <ul class="list-unstyled">
+                <li><a href="">Managed Website</a></li>
+                <li><a href="">Manage Reputation</a></li>
+                <li><a href="">Power Tools</a></li>
+                <li><a href="">Marketing Service</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-sm-6 col-lg-2">
+            <div class="single_footer_part">
+              <h4>Quick Links</h4>
+              <ul class="list-unstyled">
+                <li><a href="">Jobs</a></li>
+                <li><a href="">Brand Assets</a></li>
+                <li><a href="">Investor Relations</a></li>
+                <li><a href="">Terms of Service</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-sm-6 col-lg-2">
+            <div class="single_footer_part">
+              <h4>Features</h4>
+              <ul class="list-unstyled">
+                <li><a href="">Jobs</a></li>
+                <li><a href="">Brand Assets</a></li>
+                <li><a href="">Investor Relations</a></li>
+                <li><a href="">Terms of Service</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-sm-6 col-lg-2">
+            <div class="single_footer_part">
+              <h4>Resources</h4>
+              <ul class="list-unstyled">
+                <li><a href="">Guides</a></li>
+                <li><a href="">Research</a></li>
+                <li><a href="">Experts</a></li>
+                <li><a href="">Agencies</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-sm-6 col-lg-4">
+            <div class="single_footer_part">
+              <h4>Newsletter</h4>
+              <p>Heaven fruitful doesn't over lesser in days. Appear creeping
+              </p>
+              <div id="mc_embed_signup">
+                <form target="_blank"
+                  action="https://spondonit.us12.list-manage.com/subscribe/post?u=1462626880ade1ac87bd9c93a&amp;id=92a4423d01"
+                  method="get" class="subscribe_form relative mail_part">
+                  <input type="email" name="email" id="newsletter-form-email" placeholder="Email Address"
+                    class="placeholder hide-on-focus" onfocus="this.placeholder = ''"
+                    onblur="this.placeholder = ' Email Address '">
+                  <button type="submit" name="submit" id="newsletter-submit"
+                    class="email_icon newsletter-submit button-contactForm">subscribe</button>
+                  <div class="mt-10 info"></div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="copyright_part">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-8">
+              <div class="copyright_text">
+                <P><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                  Copyright &copy;
+                  <script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made
+                  with <i class="ti-heart" aria-hidden="true"></i> by <a href="https://colorlib.com"
+                    target="_blank">Colorlib</a>
+                  <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                </P>
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <div class="footer_icon social_icon">
+                <ul class="list-unstyled">
+                  <li><a href="#" class="single_social_icon"><i class="fab fa-facebook-f"></i></a></li>
+                  <li><a href="#" class="single_social_icon"><i class="fab fa-twitter"></i></a></li>
+                  <li><a href="#" class="single_social_icon"><i class="fas fa-globe"></i></a></li>
+                  <li><a href="#" class="single_social_icon"><i class="fab fa-behance"></i></a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <!--::footer_part end::-->
+
+    <script>
+
+      //  quantity increment
+
+      function incrementQuantity(productId) {
+
+        const quantityInput = document.querySelector(`input[data-product-id='${productId}']`);
+        const currentQuantity = parseInt(quantityInput.value);
+        const maxQuantity = parseInt(quantityInput.getAttribute('max'));
+
+        if (currentQuantity < maxQuantity) {
+
+          quantityInput.value = currentQuantity + 1;
+          updateSubtotal(productId);
+          updateTotalAmount();
+          sendUpdatedQuantity(productId, currentQuantity + 1);
+
+        } else {
+
+          quantityInput.value = maxQuantity;
+          updateSubtotal(productId);
+          updateTotalAmount();
+
+          Swal.fire({
+            icon: 'warning',
+            title: 'Maximum Stock Exceeded',
+            text: 'The requested quantity exceeds the available stock.',
+            confirmButtonText: 'OK'
+
+          });
+          sendUpdatedQuantity(productId, maxQuantity);
+        }
+      }
+
+
+      //  quantity decrement
+      function decrementQuantity(productId) {
+
+        const quantityInput = document.querySelector(`input[data-product-id='${productId}']`);
+        const currentQuantity = parseInt(quantityInput.value);
+
+        if (currentQuantity > 1) {
+          quantityInput.value = currentQuantity - 1;
+          updateSubtotal(productId);
+          updateTotalAmount();
+          sendUpdatedQuantity(productId, currentQuantity - 1);
+        }
+      }
+
+      //  update subtotal for a product
+
+      function updateSubtotal(productId) {
+
+        const quantityInput = document.querySelector(`input[data-product-id='${productId}']`);
+        const productQuantity = parseInt(quantityInput.value);
+        const productPriceElement = document.querySelector(`#price_${productId}`);
+        const productPrice = parseFloat(productPriceElement.textContent.replace('₹', '').trim());
+        const subtotalElement = document.querySelector(`.subtotal[data-product-id='${productId}']`);
+
+        const subtotal = productQuantity * productPrice;
+        subtotalElement.textContent = `₹ ${subtotal.toFixed(2)}`;
+
+        updateTotalAmount();
+      }
+
+
+
+
+      // update total amount
+
+      function updateTotalAmount() {
+        const subtotalElements = document.querySelectorAll('.subtotal');
+        let totalAmount = 0;
+
+        subtotalElements.forEach(subtotalElement => {
+          const subtotal = parseFloat(subtotalElement.textContent.replace('₹', '').trim());
+          totalAmount += subtotal;
+        });
+
+        const totalAmountElement = document.querySelector('#totalAmount');
+        totalAmountElement.textContent = `₹ ${totalAmount}`;
+      }
+
+
+
+      //  send updated quantity data to backend
+
+      function sendUpdatedQuantity(productId, quantity) {
+        fetch('/update-quantity', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ productId, quantity })
+        })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Quantity update failed');
+            }
+            return response.json();
+          })
+          .then(data => {
+            console.log('Quantity updated successfully:', data);
+            if (data.message === "Maximum stock exceeded") {
+              Swal.fire({
+                icon: 'warning',
+                title: 'Maximum Stock Exceeded',
+                text: 'The requested quantity exceeds the available stock.',
+                confirmButtonText: 'OK'
+              });
+            }
+          })
+          .catch(error => {
+            console.error('Error updating quantity:', error);
+            Swal.fire({
+              icon: 'error',
+              title: 'Quantity Update Failed',
+              text: 'Failed to update quantity. Please try again later.',
+              confirmButtonText: 'OK'
+            });
+          });
+      }
+
+
+
+
+
+      //Remove product
+      function removecart(productId) {
+        Swal.fire({
+          title: "Are you sure?",
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: "Yes"
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // Call fetch to send POST request with productId
+            fetch('/deletecartproduct', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ productId })
+            }).then(response => response.json())
+              .then(data => {
+                console.log('rgga');
+                if (data.success) {
+                  console.log('Product deletion successful');
+                  // Optionally update the UI or reload the cart view
+                  location.reload(); // Reload the current page
+                } else {
+                  console.log('Product deletion failed');
+                  // Handle error or display message to the user
+                }
+              })
+              .catch(error => {
+                console.error('Fetch error:', error);
+                // Handle fetch error
+              });
+          }
+        });
+      }
+
+
+      // proceed to chekout funtion 
+
+      document.addEventListener('DOMContentLoaded', () => {
+
+        const checkoutButton = document.getElementById('checkoutButton');
+
+        checkoutButton.addEventListener('click', () => {
+
+          fetch('/checkProductStock', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+
+          })
+
+            .then(response => response.json())
+            .then(data => {
+              if (data.success) {
+
+                window.location.href = '/checkout'
+
+              } else {
+
+                Swal.fire({
+                  icon: 'error',
+                  title: 'Error',
+                  text: 'Products is out of Stock, please remove product',
+                  showConfirmButton: false, 
+                  timer: 2000, 
+                  timerProgressBar: true
+
+                })
+
+                Swal.fire({
+                  icon: 'warning',
+                  title: 'Warning',
+                  text: 'No products in cart',
+                  showConfirmButton: false,
+                  timer: 2000, 
+                  timerProgressBar: true 
+                });
+              }
+            })
+            .catch(error => {
+              console.log('fect error', error);
+            })
+
+        })
+      })
+
+
+    </script>
+
+    <!-- jquery plugins here-->
+    <!-- jquery -->
+    <script src="js/jquery-1.12.1.min.js"></script>
+    <!-- popper js -->
+    <script src="js/popper.min.js"></script>
+    <!-- bootstrap js -->
+    <script src="js/bootstrap.min.js"></script>
+    <!-- easing js -->
+    <script src="js/jquery.magnific-popup.js"></script>
+    <!-- swiper js -->
+    <script src="js/swiper.min.js"></script>
+    <!-- swiper js -->
+    <script src="js/masonry.pkgd.js"></script>
+    <!-- particles js -->
+    <script src="js/owl.carousel.min.js"></script>
+    <script src="js/jquery.nice-select.min.js"></script>
+    <!-- slick js -->
+    <script src="js/slick.min.js"></script>
+    <script src="js/jquery.counterup.min.js"></script>
+    <script src="js/waypoints.min.js"></script>
+    <script src="js/contact.js"></script>
+    <script src="js/jquery.ajaxchimp.min.js"></script>
+    <script src="js/jquery.form.js"></script>
+    <script src="js/jquery.validate.min.js"></script>
+    <script src="js/mail-script.js"></script>
+    <script src="js/stellar.js"></script>
+    <script src="js/price_rangs.js"></script>
+    <!-- custom js -->
+    <script src="js/custom.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+
+
+    <%- include("../layouts/footer.ejs") %>

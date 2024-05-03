@@ -1,0 +1,533 @@
+<%- include("../layouts/header.ejs") %>
+
+    <style>
+        .big_image {
+            overflow: hidden;
+            position: relative;
+        }
+
+        .big_image img {
+            width: 500px;
+            height: 500px;
+            transition: transform 0.3s ease;
+        }
+
+        .big_image img:hover {
+            transform: scale(1.5);
+        }
+
+        .small_images {
+            display: flex;
+            justify-content: flex-start;
+            margin-top: 20px;
+
+        }
+
+        .small_image {
+            width: 100px;
+            height: 100px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        .small_image:hover {
+            opacity: 0.7;
+        }
+    </style>
+    <%- include("../layouts/navbar.ejs") %>
+
+        <!--================Single Product Area =================-->
+        <div class="product_image_area section_padding">
+            <div class="container">
+                <div class="row s_product_inner justify-content-between">
+                    <div class="col-lg-7 col-xl-7">
+                        <div class="product_slider_img">
+                            <div class="big_image">
+                                <img id="bigImage" src="<%= products.image[0] %>" />
+                            </div>
+                            <div class="small_images">
+                                <img class="small_image" src="<%= products.image[0] %>" data-index="0" />
+                                <img class="small_image" src="<%= products.image[1] %>" data-index="1" />
+                                <img class="small_image" src="<%= products.image[2] %>" data-index="2" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-5 col-xl-4">
+                        <div class="s_product_text">
+                            <h5>previous <span>|</span> next</h5>
+                            <h3>
+                                <%= products.pname %>
+                            </h3>
+                            <h2>
+                                ₹ <%= products.price %>
+                            </h2>
+                            <ul class="list">
+                                <li>
+                                    <a class="active" href="#">
+                                        <span>Category</span> : <%= products.category.name %></a>
+                                </li>
+                                <li>
+                                    <a href="#"> <span>Availibility</span> : <% if(products.quantity==0){ %>
+                                            Stock Out
+
+                                            <% } else{ %>
+                                                Stock : <%= products.quantity %>
+                                                    <% } %>
+                                    </a>
+                                </li>
+                            </ul>
+                            <p>
+                                <%= products.description %>
+                            </p>
+                            <div class="card_area d-flex justify-content-between align-items-center">
+
+                                <a href="" class="btn_3 addtocartbutton" data-product-id="<%= products._id %>">add to
+                                    cart</a>
+                                <a href="#" onclick="addWishilist('<%= products._id %>')" class="like_us"> <i
+                                        class="ti-heart"></i> </a>
+                            </div>
+                            <!-- <%
+                                if(typeof message !== 'undefined'){
+                            %>
+                              <p style="color: red;"><%= message %></p>
+                            <%    
+                                }
+                             %> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <section class="product_description_area">
+            <div class="container">
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+
+
+
+                    <li class="nav-item">
+                        <a class="nav-link active" id="review-tab" data-toggle="tab" href="#review" role="tab"
+                            aria-controls="review" aria-selected="false">Reviews</a>
+                    </li>
+                </ul>
+                <div class="tab-content" id="myTabContent">
+
+
+
+                    <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+                        <div class="row">
+
+                            <div class="col-lg-6">
+                                <div class="review_box">
+                                    <h4>Post a comment</h4>
+                                    <form class="row contact_form" action="contact_process.php" method="post"
+                                        id="contactForm" novalidate="novalidate">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <input type="text" class="form-control" id="name" name="name"
+                                                    placeholder="Your Full name" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <input type="email" class="form-control" id="email" name="email"
+                                                    placeholder="Email Address" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <input type="text" class="form-control" id="number" name="number"
+                                                    placeholder="Phone Number" />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <textarea class="form-control" name="message" id="message" rows="1"
+                                                    placeholder="Message"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12 text-right">
+                                            <button type="submit" value="submit" class="btn_3">
+                                                Submit Now
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade show active" id="review" role="tabpanel" aria-labelledby="review-tab">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="row total_rate">
+                                    <div class="col-6">
+                                        <div class="box_total">
+                                            <h5>Overall</h5>
+                                            <h4>4.0</h4>
+                                            <h6>(03 Reviews)</h6>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="rating_list">
+                                            <h3>Based on 3 Reviews</h3>
+                                            <ul class="list">
+                                                <li>
+                                                    <a href="#">5 Star
+                                                        <i class="fa fa-star"></i>
+                                                        <i class="fa fa-star"></i>
+                                                        <i class="fa fa-star"></i>
+                                                        <i class="fa fa-star"></i>
+                                                        <i class="fa fa-star"></i> 01</a>
+                                                </li>
+                                                <li>
+                                                    <a href="#">4 Star
+                                                        <i class="fa fa-star"></i>
+                                                        <i class="fa fa-star"></i>
+                                                        <i class="fa fa-star"></i>
+                                                        <i class="fa fa-star"></i>
+                                                        <i class="fa fa-star"></i> 01</a>
+                                                </li>
+                                                <li>
+                                                    <a href="#">3 Star
+                                                        <i class="fa fa-star"></i>
+                                                        <i class="fa fa-star"></i>
+                                                        <i class="fa fa-star"></i>
+                                                        <i class="fa fa-star"></i>
+                                                        <i class="fa fa-star"></i> 01</a>
+                                                </li>
+                                                <li>
+                                                    <a href="#">2 Star
+                                                        <i class="fa fa-star"></i>
+                                                        <i class="fa fa-star"></i>
+                                                        <i class="fa fa-star"></i>
+                                                        <i class="fa fa-star"></i>
+                                                        <i class="fa fa-star"></i> 01</a>
+                                                </li>
+                                                <li>
+                                                    <a href="#">1 Star
+                                                        <i class="fa fa-star"></i>
+                                                        <i class="fa fa-star"></i>
+                                                        <i class="fa fa-star"></i>
+                                                        <i class="fa fa-star"></i>
+                                                        <i class="fa fa-star"></i> 01</a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="review_list">
+                                    <div class="review_item">
+                                        <div class="media">
+                                            <div class="d-flex">
+                                                <img src="img/product/single-product/review-1.png" alt="" />
+                                            </div>
+                                            <div class="media-body">
+                                                <h4>Blake Ruiz</h4>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                                <i class="fa fa-star"></i>
+                                            </div>
+                                        </div>
+                                        <p>
+                                            Lorem ipsum dolor sit amet, consectetur adipisicing elit,
+                                            sed do eiusmod tempor incididunt ut labore et dolore magna
+                                            aliqua. Ut enim ad minim veniam, quis nostrud exercitation
+                                            ullamco laboris nisi ut aliquip ex ea commodo
+                                        </p>
+                                    </div>
+
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!--================End Product Description Area =================-->
+
+        <!-- product_list part start-->
+        <section class="product_list best_seller">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-12">
+                        <div class="section_tittle text-center">
+                            <h2>Related Products <span>shop</span></h2>
+                        </div>
+                    </div>
+                </div>
+                <div class="row align-items-center justify-content-between">
+                    <div class="col-lg-12">
+                        <div class="row">
+
+                            <% if(relatedproducts.length> 0){ %>
+                                <% relatedproducts.forEach((product)=>{ %>
+                                    <a href="/singleproduct?id=<%= product._id %> ">
+                                        <div class="col-lg-4 col-sm-4">
+                                            <div class="single_product_item">
+                                                <img src="<%= product.image[0] %>" alt="">
+                                                <div class="single_product_text">
+                                                    <h4>
+                                                        <%= product.pname %>
+                                                    </h4>
+                                                    <h3>
+                                                        ₹ <%= product.price %>
+                                                    </h3>
+                                                    <a href="#" class="add_cart addtocartbutton"
+                                                        data-product-id="<%= product._id %>">+ add to cart<i
+                                                            class="fas fa-cart-plus"></i></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                    <% }) %>
+                                        <% } %>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- product_list part end-->
+
+        <!--::footer_part start::-->
+        <footer class="footer_part">
+            <div class="container">
+                <div class="row justify-content-around">
+                    <div class="col-sm-6 col-lg-2">
+                        <div class="single_footer_part">
+                            <h4>Top Products</h4>
+                            <ul class="list-unstyled">
+                                <li><a href="">Managed Website</a></li>
+                                <li><a href="">Manage Reputation</a></li>
+                                <li><a href="">Power Tools</a></li>
+                                <li><a href="">Marketing Service</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-lg-2">
+                        <div class="single_footer_part">
+                            <h4>Quick Links</h4>
+                            <ul class="list-unstyled">
+                                <li><a href="">Jobs</a></li>
+                                <li><a href="">Brand Assets</a></li>
+                                <li><a href="">Investor Relations</a></li>
+                                <li><a href="">Terms of Service</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-lg-2">
+                        <div class="single_footer_part">
+                            <h4>Features</h4>
+                            <ul class="list-unstyled">
+                                <li><a href="">Jobs</a></li>
+                                <li><a href="">Brand Assets</a></li>
+                                <li><a href="">Investor Relations</a></li>
+                                <li><a href="">Terms of Service</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-lg-2">
+                        <div class="single_footer_part">
+                            <h4>Resources</h4>
+                            <ul class="list-unstyled">
+                                <li><a href="">Guides</a></li>
+                                <li><a href="">Research</a></li>
+                                <li><a href="">Experts</a></li>
+                                <li><a href="">Agencies</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-lg-4">
+                        <div class="single_footer_part">
+                            <h4>Newsletter</h4>
+                            <p>Heaven fruitful doesn't over lesser in days. Appear creeping
+                            </p>
+                            <div id="mc_embed_signup">
+                                <form target="_blank"
+                                    action="https://spondonit.us12.list-manage.com/subscribe/post?u=1462626880ade1ac87bd9c93a&amp;id=92a4423d01"
+                                    method="get" class="subscribe_form relative mail_part">
+                                    <input type="email" name="email" id="newsletter-form-email"
+                                        placeholder="Email Address" class="placeholder hide-on-focus"
+                                        onfocus="this.placeholder = ''" onblur="this.placeholder = ' Email Address '">
+                                    <button type="submit" name="submit" id="newsletter-submit"
+                                        class="email_icon newsletter-submit button-contactForm">subscribe</button>
+                                    <div class="mt-10 info"></div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="copyright_part">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div class="copyright_text">
+                                <P><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                                    Copyright &copy;
+                                    <script>document.write(new Date().getFullYear());</script> All rights reserved |
+                                    This template is made with <i class="ti-heart" aria-hidden="true"></i> by <a
+                                        href="https://colorlib.com" target="_blank">Colorlib</a>
+                                    <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                                </P>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="footer_icon social_icon">
+                                <ul class="list-unstyled">
+                                    <li><a href="#" class="single_social_icon"><i class="fab fa-facebook-f"></i></a>
+                                    </li>
+                                    <li><a href="#" class="single_social_icon"><i class="fab fa-twitter"></i></a></li>
+                                    <li><a href="#" class="single_social_icon"><i class="fas fa-globe"></i></a></li>
+                                    <li><a href="#" class="single_social_icon"><i class="fab fa-behance"></i></a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+
+            $(document).ready(function () {
+                $(".small_image").click(function () {
+
+                    var newSrc = $(this).attr("src");
+                    $("#bigImage").attr("src", newSrc);
+                    $(".small_image").removeClass("active");
+                    $(this).addClass("active");
+                });
+            });
+
+            // add cart
+
+            document.addEventListener('DOMContentLoaded', () => {
+                const addToCartButtons = document.querySelectorAll('.addtocartbutton');
+
+                addToCartButtons.forEach(button => {
+                    button.addEventListener('click', async (event) => {
+                        event.preventDefault();
+
+                        const productId = button.getAttribute('data-product-id');
+
+
+                        try {
+                            const response = await fetch('/addcart', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({ productId })
+                            })
+
+
+
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok.');
+                            }
+
+                            const data = await response.json();
+
+                            if (data.success) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Success!',
+                                    text: 'product added to cart successfully!'
+                                })
+                            } else {
+
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Failed to add Product1',
+                                    text: `error: ${data.message}`
+                                });
+                            }
+
+                        } catch (error) {
+                            console.log('Error adding to cart', error);
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Failed to add Product3',
+                                text: 'Something went wrong, Please try again later.'
+                            })
+                        }
+                    })
+                })
+            })
+
+            // add wishilist
+
+            function addWishilist(productid) {
+
+                fetch('/addProdcutToWishilist',{
+                    method:'POST',
+                    headers:{
+                        'Content-Type': 'application/json'
+                    },
+                    body:JSON.stringify({productid:productid})
+                })
+                .then(response => response.json())
+                .then(data =>{
+                    if(data.success){
+                        Swal.fire({
+                            icon: 'Success',
+                            title: 'Success',
+                            text: 'Product Added ',
+                            showConfirmButton: false, // Disable the confirm button
+                            timer: 1500, // Display the alert for 3 seconds
+                            timerProgressBar: true
+
+                        })
+
+                    }else if (data.errors && data.errors.length > 0){
+                        data.errors.forEach(errMsg =>{
+
+                            Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: errMsg,
+                            showConfirmButton: false,
+                            timer: 15000, 
+                            timerProgressBar: true
+
+                        })
+                        })
+                       
+
+                    }
+                })
+            }
+
+        </script>
+        <script src="js/jquery-1.12.1.min.js"></script>
+        <script src="js/popper.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/jquery.magnific-popup.js"></script>
+        <script src="js/lightslider.min.js"></script>
+        <script src="js/masonry.pkgd.js"></script>
+        <script src="js/owl.carousel.min.js"></script>
+        <script src="js/jquery.nice-select.min.js"></script>
+        <script src="js/slick.min.js"></script>
+        <script src="js/swiper.jquery.js"></script>
+        <script src="js/jquery.counterup.min.js"></script>
+        <script src="js/waypoints.min.js"></script>
+        <script src="js/contact.js"></script>
+        <script src="js/jquery.ajaxchimp.min.js"></script>
+        <script src="js/jquery.form.js"></script>
+        <script src="js/jquery.validate.min.js"></script>
+        <script src="js/mail-script.js"></script>
+        <script src="js/stellar.js"></script>
+        <script src="js/theme.js"></script>
+        <script src="js/custom.js"></script>
+
+
+        <%- include("../layouts/footer.ejs") %>

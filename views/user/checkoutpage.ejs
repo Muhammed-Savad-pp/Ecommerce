@@ -1,0 +1,532 @@
+<%- include("../layouts/header.ejs") %>
+
+    <%- include("../layouts/navbar.ejs") %>
+
+        <style>
+            body {
+                background-color: #ecfdff;
+
+            }
+
+
+
+            .card {
+                box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .1), 0 1px 2px 0 rgba(0, 0, 0, .06);
+            }
+
+            .card {
+                position: relative;
+                display: flex;
+                flex-direction: column;
+                min-width: 0;
+                word-wrap: break-word;
+                background-color: #fff;
+                background-clip: border-box;
+                border: 0 solid rgba(0, 0, 0, .125);
+                border-radius: .25rem;
+            }
+
+            .card-body {
+                flex: 1 1 auto;
+                min-height: 1px;
+                padding: 1rem;
+            }
+
+            .gutters-sm {
+                margin-right: -8px;
+                margin-left: -8px;
+            }
+
+            .gutters-sm>.col,
+            .gutters-sm>[class*=col-] {
+                padding-right: 8px;
+                padding-left: 8px;
+            }
+
+            .mb-3,
+            .my-3 {
+                margin-bottom: 1rem !important;
+            }
+
+            .bg-gray-300 {
+                background-color: #e2e8f0;
+            }
+
+            .h-100 {
+                height: 100% !important;
+            }
+
+            .shadow-none {
+                box-shadow: none !important;
+            }
+
+            /* Modal styles */
+            .modal {
+                display: none;
+                /* Hidden by default */
+                position: fixed;
+                z-index: 999;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                overflow: auto;
+                background-color: rgba(0, 0, 0, 0.5);
+
+                /* Semi-transparent background */
+            }
+
+            .modal-content {
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+                background-color: #fff;
+                /* margin: 15% auto; */
+                padding: 20px;
+                border: 5px;
+                /* width: 80%; */
+                max-width: 50%;
+                max-height: 80%;
+                overflow: auto;
+            }
+
+            .close {
+                position: absolute;
+                top: 10px;
+                right: 20px;
+                font-size: 28px;
+                cursor: pointer;
+            }
+
+            /* Style the button inside the modal */
+            .modal-content button {
+                padding: 10px 20px;
+                background-color: #007bff;
+                color: #fff;
+                border: none;
+                cursor: pointer;
+            }
+
+            /* Close button hover effect */
+            .modal-content button:hover {
+                background-color: #0056b3;
+            }
+        </style>
+
+        <section class="checkout_area padding_top">
+            <div class="container">
+
+
+                <div class="billing_details">
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <div class="col-md-12" style="display: flex; justify-content: end; margin-bottom: 10px;  ">
+                                <button id="openModalBtn" class="btn btn-success">+ Add New Address</button>
+                            </div>
+                            <h2 style="color: black; margin-left: 12px;">Addresses</h2>
+                            <% if(addressdata && addressdata.address && addressdata.address.length> 0) { %>
+                                <% for(let i=0; i < addressdata.address.length; i++) { %>
+                                    <div class="col-md-12 mb-3 justify-content-center">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <div class="col-md-8">
+
+                                                        <span class="ap">
+                                                            <%= addressdata.address[i].name %>
+                                                        </span><br>
+                                                        <span class="ap">
+                                                            <%= addressdata.address[i].city %>
+                                                        </span><br>
+                                                        <span class="ap">
+                                                            <%= addressdata.address[i].district %>
+                                                        </span><br>
+                                                        <span class="ap">
+                                                            <%= addressdata.address[i].state %>
+                                                        </span><br>
+                                                        <span class="ap">
+                                                            <%= addressdata.address[i].country %>
+                                                        </span><br>
+                                                        <span class="ap">
+                                                            <%= addressdata.address[i].pincode %>
+                                                        </span><br>
+                                                        <span class="ap">
+                                                            <%= addressdata.address[i].mobile %>
+                                                        </span><br><br>
+                                                    </div>
+                                                    <div class="col-md-4 d-flex justify-content-end align-items-center">
+                                                        <div class="form-check">
+                                                            <input class="form-check-input select-address"
+                                                                type="checkbox" id="selectAddress" value="<%= i %>"
+                                                                name="selectAddress">
+
+                                                        </div>
+                                                    </div>
+
+                                                    <a href="/checkoutEditAddress?id=<%= addressdata.address[i]._id %>"><button
+                                                            class="btn btn-primary px-2 py-1 mx-2">Edit</button></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <% } %>
+                                        <% } %>
+
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="order_box">
+                                <h2>Your Order</h2>
+                                <ul class="list">
+                                    <li>
+                                        <a href="#">Product
+                                            <span>Total</span>
+                                        </a>
+                                    </li>
+
+
+                                </ul>
+                                <ul class="list list_2">
+                                    <li>
+                                        <a href="#">Subtotal
+                                            <span>₹ <%= totalamount %></span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#">Delivery Charge
+                                            <span>₹ 0.00</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#">Total
+                                            <span>₹ <%= totalamount %></span>
+                                        </a>
+                                    </li>
+                                </ul>
+                                <br>
+                                <div class="payment_options">
+                                    <div class="payment_item">
+                                        <div class="radion_btn">
+                                            <input type="radio" id="cashOnDelivery" name="paymentMethod"
+                                                value="Cash On Delivery" />
+                                            <label for="cashOnDelivery">Cash On Delivery</label>
+                                            <div class="check"></div>
+                                        </div>
+                                    </div>
+                                    <div class="payment_item active">
+                                        <div class="radion_btn">
+                                            <input type="radio" id="paypal" name="paymentMethod" value="paypal" />
+                                            <label for="paypal">RazoPay</label>
+                                           
+                                            <div class="check"></div>
+                                        </div>
+                                    </div>
+                                    <div class="payment_item">
+                                        <div class="radion_btn">
+                                            <input type="radio" id="wallets" name="paymentMethod" value="wallets" />
+                                            <label for="wallets">Wallets</label>
+                                            <div class="check"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <p class="btn_3" href="#">Proceed to order</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="myModal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h2 style="margin-left: 150px; color: black;">Add New Address</h2>
+                    <form action="/addAddressFromCheckout" method="post" onsubmit="return validate()">
+                        <div class="capdiv ">
+                            <p>Name*</p>
+                            <input type="text" placeholder="Enter Name" name="name" id="name">
+                            <p id="nameError" style="color: red;"></p>
+                        </div>
+                        <div class="capdiv row mb-3">
+                            <div class="col">
+                                <p>City*</p>
+                                <input type="text" placeholder="Enter City" name="city" id="city">
+                                <p id="cityError" style="color: red;"></p>
+                            </div>
+                            <div class="col">
+                                <p>District</p>
+                                <input type="text" placeholder="Enter District" name="district" id="district">
+                                <p id="distError" style="color: red;"></p>
+                            </div>
+                        </div>
+
+                        <div class="capdiv row mb-3">
+                            <div class="col">
+                                <p>State</p>
+                                <input type="text" placeholder="Enter State" name="state" id="state">
+                                <p id="stateError" style="color: red;"></p>
+                            </div>
+                            <div class="col">
+                                <p>Country</p>
+                                <input type="text" placeholder="Enter Country" name="country" id="country">
+                                <p id="countryError" style="color: red;"></p>
+                            </div>
+                        </div>
+
+                        <div class="capdiv row mb-3">
+                            <div class="col">
+                                <p>Mobile</p>
+                                <input type="text" placeholder="Enter Mobile No" name="mno" id="mno">
+                                <p id="mnoError" style="color: red;"></p>
+                            </div>
+                            <div class="col">
+                                <p>PinCode</p>
+                                <input type="text" placeholder="Enter PinCode" name="pincode" id="pincode">
+                                <p id="pincodeError" style="color: red;"></p>
+                            </div>
+                        </div>
+
+                        <div style="margin-left: 220px; margin-top: 10px; ">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </section>
+
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+
+
+
+            $(document).ready(function () {
+                $('.select-address').change(function () {
+                    $('.select-address').not(this).prop('checked', false);
+                });
+            });
+
+
+
+
+            // JavaScript to handle radio button selection
+            document.addEventListener('DOMContentLoaded', function () {
+                const paymentRadios = document.querySelectorAll('input[type="radio"][name="paymentMethod"]');
+
+                paymentRadios.forEach(radio => {
+                    radio.addEventListener('change', function () {
+
+                        paymentRadios.forEach(otherRadio => {
+                            if (otherRadio !== this) {
+                                otherRadio.checked = false;
+                            }
+                        });
+                    });
+                });
+            });
+
+
+
+            // modal
+
+
+            // Get references to modal elements
+            var modal = document.getElementById('myModal');
+            var openModalBtn = document.getElementById('openModalBtn');
+            var closeModalBtn = document.querySelector('.close');
+
+            function openModal() {
+                modal.style.display = 'block';
+            }
+
+            function closeModal() {
+                modal.style.display = 'none';
+            }
+
+            openModalBtn.addEventListener('click', openModal);
+            closeModalBtn.addEventListener('click', closeModal);
+
+
+
+            // validation 
+            function validate() {
+
+
+                var nameInput = document.getElementById('name').value.trim();
+                var phoneInput = document.getElementById('mno').value.trim();
+                var pincodeInput = document.getElementById('pincode').value.trim();
+                var cityInput = document.getElementById('city').value.trim();
+                var districtInput = document.getElementById('district').value.trim();
+                var stateInput = document.getElementById('state').value.trim();
+                var countryInput = document.getElementById('country').value.trim();
+
+
+
+
+
+
+                var nameRegex = /^[a-zA-Z\s]*$/;
+                var phoneRegex = /^\d{10}$/;
+                var pincodeRegex = /^\d{6}$/;
+
+                var nameError = document.getElementById('nameError');
+                var phoneError = document.getElementById('mnoError');
+                var pincodeError = document.getElementById('pincodeError')
+                var cityError = document.getElementById('cityError')
+                var districtError = document.getElementById('distError')
+                var stateError = document.getElementById('stateError')
+                var countryError = document.getElementById('countryError')
+
+                nameError.innerText = '';
+                phoneError.innerText = '';
+                pincodeError.innerText = '';
+                cityError.innerText = '';
+                districtError.innerText = '';
+                stateError.innerText = '';
+                countryError.innerText = '';
+
+                var isValid = true;
+
+                if (nameInput == '') {
+                    nameError.innerText = 'Name cannot be empty';
+                    return false;
+
+                } else if (!nameRegex.test(nameInput)) {
+                    nameError.innerText = 'Name can  only contain letters and spaces'
+                    return false
+                }
+
+                if (phoneInput === '') {
+                    phoneError.innerText = 'Phone number cannot be empty';
+                    return false
+                } else if (!phoneRegex.test(phoneInput)) {
+                    phoneError.innerText = 'Phone number must be 10 numbers';
+                    return false
+                }
+
+                if (pincodeInput === '') {
+                    pincodeError.innerText = 'Pincode cannot be empty';
+                    return false
+                } else if (!pincodeRegex.test(pincodeInput)) {
+                    pincodeError.innerText = 'Pincode  must be 6 numbers'
+                    return false
+                }
+
+                if (cityInput == '') {
+                    cityError.innerText = 'City cannot be empty';
+                    return false;
+
+                }
+
+                if (districtInput == '') {
+                    districtError.innerText = 'District cannot be empty';
+                    return false;
+
+                }
+
+                if (stateInput == '') {
+                    stateError.innerText = 'State cannot be empty';
+                    return false;
+
+                }
+
+                if (countryInput == '') {
+                    countryError.innerText = 'Country cannot be empty';
+                    return false;
+
+                }
+
+
+                return isValid
+            }
+
+
+            // place order
+
+            document.addEventListener('DOMContentLoaded', () => {
+
+                function proceedToCheckout(paymentMethod, addressId) {
+                    fetch('/orderproduct', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ paymentMethod, addressId })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+
+                                window.location.href = '/order'
+
+                            } else {
+
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'Products is out of Stock, please remove product',
+                                    showConfirmButton: false, // Disable the confirm button
+                                    timer: 2000, // Display the alert for 3 seconds
+                                    timerProgressBar: true
+
+                                })
+                            }
+                        })
+                
+                .catch(error => {
+                    console.error('Fetch error:', error);
+                    // Handle fetch error
+                });
+                }
+
+            //document.addEventListener('DOMContentLoaded', () => {
+            // Payment method
+            const paymentRadios = document.querySelectorAll('input[name="paymentMethod"]');
+            let paymentMethod = null;
+
+            paymentRadios.forEach((radio) => {
+                radio.addEventListener('click', (event) => {
+                    paymentMethod = event.target.value;
+                    console.log('Selected Payment Method:', paymentMethod);
+                });
+            });
+
+            // Address selection
+            const checkboxes = document.querySelectorAll('.select-address');
+            let addressId = null;
+
+            checkboxes.forEach((checkbox) => {
+                checkbox.addEventListener('change', (event) => {
+                    if (event.target.checked) {
+                        addressId = event.target.value;
+                        console.log('Selected Address ID:', addressId);
+                    }
+                });
+            });
+
+            // Proceed to Paypal button click handler
+            const orderButton = document.querySelector('.btn_3');
+            orderButton.addEventListener('click', () => {
+                if (paymentMethod && addressId) {
+                    console.log('Proceeding to Paypal with:');
+                    console.log('Selected Payment Method:', paymentMethod);
+                    console.log('Selected Address ID:', addressId);
+
+                    // Call the proceedToCheckout function with paymentMethod and addressId
+                    proceedToCheckout(paymentMethod, addressId);
+                } else {
+                    console.log('Please select both Payment Method and Address');
+                }
+            });
+                });
+
+
+            //});
+
+
+
+        </script>
+
+
+
+        <%- include("../layouts/footer.ejs") %>

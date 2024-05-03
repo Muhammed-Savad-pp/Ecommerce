@@ -1,0 +1,472 @@
+<%- include("../layouts/header.ejs") %>
+    <%- include("../layouts/navbar.ejs") %>
+
+        <style>
+            body {
+                margin-top: 80px;
+                color: #1a202c;
+                text-align: left;
+                background-color: #ecfdff;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .center {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+
+            }
+
+            .center-div {
+                width: 80%;
+                height: 100%;
+                background-color: white;
+                margin-top: 90px;
+            }
+
+            .first-div {
+
+                margin-top: 25px;
+                margin-left: 20px;
+            }
+
+            .second-div {
+
+                margin-left: 55px;
+                margin-top: 25px;
+
+            }
+
+            .third-div {
+                margin-left: 75px;
+                margin-top: 25px;
+            }
+
+            .top-div {
+
+                margin-top: 20px;
+
+            }
+
+            .prode {
+                height: 100%;
+                margin-left: 30px;
+                margin-right: 10px
+            }
+
+            /* Modal styles */
+            /* Your modal styles */
+            .modal {
+                display: none;
+                position: fixed;
+                z-index: 999;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                overflow: auto;
+                background-color: rgba(0, 0, 0, 0.5);
+            }
+
+            .modal-content {
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+                background-color: #fff;
+                padding: 20px;
+                max-width: 50%;
+                max-height: 80%;
+                overflow: auto;
+            }
+
+            .close {
+                position: absolute;
+                top: 10px;
+                right: 20px;
+                font-size: 28px;
+                cursor: pointer;
+            }
+
+            .returnClose{
+                position: absolute;
+                top: 10px;
+                right: 20px;
+                font-size: 28px;
+                cursor: pointer; 
+            }
+
+            /* Style the button inside the modal */
+            .modal-content button {
+                padding: 10px 20px;
+                background-color: #007bff;
+                color: #fff;
+                border: none;
+                cursor: pointer;
+            }
+
+            /* Close button hover effect */
+            .modal-content button:hover {
+                background-color: #0056b3;
+            }
+        </style>
+
+
+
+        <div class="container-fluid center">
+            <div class="center-div">
+                <div class="col-lg-12 top-div">
+                    <h4>Date : <%= orderData.currendDate.toLocaleDateString('en-US', { day: 'numeric' , month: 'short' ,
+                            year: 'numeric' }) %>
+                    </h4>
+                    <p>Order ID : #<%= orderData.orderId %>
+                    </p>
+                    <hr>
+                </div>
+                <div class="row" style="margin-left: 10px;">
+                    <div class="col-md-3 first-div">
+
+                        <h4><i style="color: rgb(31, 31, 44);" class="fa-solid fa-user"></i> Customer</h4>
+
+                        <p style="font-size: 18px; font-weight: 400;margin-bottom: 0rem;">
+                            <%= userData.name %>
+                        </p>
+                        <p style="font-size: 18px; font-weight: 400; margin-bottom: 0rem;">
+                            <%= userData.email %>
+                        </p>
+                        <p style="font-size: 18px; font-weight: 400; margin-bottom: 0rem;">
+                            <%= userData.mobile %>
+                        </p>
+
+                    </div>
+                    <div class="col-md-3 second-div">
+                        <h4><i class="fa-solid fa-truck"></i> Order Info</h4>
+                        <p><span style="font-size: 18px; font-weight: 400;">Pay Method: </span>
+                            <%= orderData.paymentMethod %>
+                        </p>
+                    </div>
+                    <div class="col-md-3 third-div">
+                        <h4><i class="fa-solid fa-location-dot"></i> Deliver to</h4>
+                        <% if (orderData && orderData.address && orderData.address.length> 0) { %>
+                            <% orderData.address.forEach((address)=> { %>
+                                <p style="margin-bottom: 0rem;">
+                                    <%= address.name %>
+                                </p>
+                                <p style="margin-bottom: 0rem;">
+                                    <%= address.city %>
+                                </p>
+                                <p style="margin-bottom: 0rem;">
+                                    <%= address.district %>
+                                </p>
+                                <p style="margin-bottom: 0rem;">
+                                    <%= address.state %>
+                                </p>
+                                <p style="margin-bottom: 0rem;">
+                                    <%= address.country %>
+                                </p>
+                                <p style="margin-bottom: 0rem;">
+                                    <%= address.pincode %>
+                                </p>
+                                <p style="margin-bottom: 0rem;">
+                                    <%= address.mobile %>
+                                </p>
+
+
+                                <% }); %>
+                                    <% } else { %>
+                                        <p>No address found</p>
+                                        <% } %>
+                    </div>
+
+
+                </div>
+                <hr>
+
+
+                <% if(orderData.items.length> 0){ %>
+                    <% orderData.items.forEach(product=> { %>
+                        <div class="col-lg-11 prode">
+
+
+                            <div class="row" style="margin-left: 0px;">
+                                <div style="width: 80px;  ">
+                                    <img src="<%= product.productId.image[0] %>" alt="fsdfdff"
+                                        style="width: 80px; height: 80px;">
+                                </div>
+                                <div style="margin-left: 45px; width: 170px;">
+                                    <br>
+                                    <p style="font-size: 20px; font-weight: 500;">
+                                        <%= product.productId.pname %>
+                                    </p>
+                                </div>
+                                <div style="margin-left: 25px;">
+                                    <p>Price</p>
+                                    <p style="font-size: 16px; font-weight: 500;">₹<%= product.price %>
+                                    </p>
+                                </div>
+
+                                <div style="margin-left: 90px;">
+                                    <p>QTY</p>
+                                    <p style="font-size: 16px; font-weight: 500;">
+                                        <%= product.quantity %>
+                                    </p>
+                                </div>
+                                <div style="margin-left: 70px;">
+
+                                    <p>Status</p>
+                                    <p style="font-size: 16px; font-weight: 500; color: rgb(9, 117, 9);">
+                                        <%= product.Status %>
+                                    </p>
+                                </div>
+                                <div style="margin-left: 90px;">
+                                    <br>
+                                    <% if(product.Status !='Cancelled' && product.Status !='Delivered' && product.Status !='Return') { %>
+                                        <button class="btn btn-danger openModalBtn"  type="button" 
+                                            data-order-id ='<%= orderData.orderId %>'
+                                            data-product-id ="<%= product.productId._id %>"> Cancel</button>
+                                       
+                                        </button>
+
+                                        <% } else if (product.Status=='Delivered' && orderData.approvel == 0){ %>
+                                            <button class="btn btn-danger openReturnModalBtn" type="button"
+                                            data-order-id ='<%= orderData.orderId %>'
+                                            data-product-id ="<%= product.productId._id %>"
+                                                id="openModalBtn">Return
+                                            </button>
+
+                                        <% } else if(orderData.approvel == 1){ %>
+                                            <p class="btn btn-rounded " style="padding: 1px; font-size: 10px; background-color:green; color:white; font-weight: 500;">Request Sended</p>
+                                        <% } else if(orderData.approvel == 3){ %>
+                                            <p class="btn btn-rounded " style="padding: 1px; font-size: 10px; background-color:green; color:white; font-weight: 500;">Retrun Declined</p>
+                                        <% } %>
+
+                                </div>
+
+
+                                
+                            </div>
+                            <hr>
+                        </div>
+                        <br>
+                        <% }) %>
+                            <% } %>
+
+            </div>
+
+            
+
+        </div>
+            <!-- cancel modal -->
+            <div id="myModal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h2 style="margin-left: 110px; color: black;">Select Cancellation Reason</h2>
+                    <hr>
+                    <select id="selectBox" style="width: 100%; height: 40px;">
+                        <option value="Order Created by Mistake">Order Created by Mistake</option>
+                        <option value="Items Would Not Arrive on Time">Items Would Not Arrive on
+                            Time</option>
+                        <option value="Item Price Too High">Item Price Too High</option>
+                        <option value="Need to Change Shipping Address">Need to Change Shipping
+                            Address</option>
+                        <option value="Need to Change Payment Method">Need to Change Payment Method
+                        </option>
+                        <option value="Other">Other</option>
+                        <!-- Other options -->
+                    </select>
+                    <button class="btn btn-Success"
+                        style="width: 90px; margin-left: 200px; margin-top: 10px;"
+                        id="submitModalButton">Submit</button>
+
+                </div>
+            </div>
+
+
+            <!-- return modal -->
+
+        <div id="myModalReturn" class="modal">
+            <div class="modal-content">
+                <span class="returnClose">&times;</span>
+                <h2 style="margin-left: 110px; color: black;">Select Return Reason</h2>
+                <hr>
+                <select id="selectBoxx" style="width: 100%; height: 40px;">
+                    <option value="Recieved Wrong Item">Recieved Wrong Item</option>
+                    <option value="Defective or Damaged Product">Defective or Damaged Product</option>
+                    <option value="Wrong Size or Fit">Wrong Size or Fit</option>
+                    <option value="Unsatisfactory Quality">Unsatisfactory Quality</option>
+                    <option value="Late Delivery">Late Delivery</option>
+                    <option value="Other">Other</option>
+                     Other options 
+                </select>
+                <button class="btn btn-Success"
+                    style="width: 90px; margin-left: 200px; margin-top: 10px;"
+                    id="submitModalButtonreturn">Submit</button>
+
+            </div>
+        </div>
+
+
+
+
+
+
+        <script>
+
+              // cancel 
+            function openModal(){
+                var modal = document.getElementById('myModal');
+                modal.style.display = 'block';
+            }
+
+            function closeModal(){
+                var modal = document.getElementById('myModal');
+                modal.style.display = 'none';
+            }
+
+
+            function submitCancellation(orderId, productId) {
+
+                const selectedReason = document.getElementById('selectBox').value;
+                console.log(selectedReason,'selectedReason');
+
+                Swal.fire({
+                    title: `Are you sure?`,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: `Yes`
+
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch('/cancelOrder', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                orderId: orderId,
+                                productId: productId,
+                                selectedReason:selectedReason
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                window.location.href = '/orderDetails'
+                            }
+                        })
+
+                    }
+                })
+            }
+
+            document.addEventListener('DOMContentLoaded', function () {
+                    
+                var openModalBtns = document.querySelectorAll('.openModalBtn');
+                var closeModalBtn = document.querySelector('.close');
+
+                    
+                openModalBtns.forEach(function(btn) {
+                    btn.addEventListener('click', function(){
+                        var orderId = this.getAttribute('data-order-id');
+                        var productId = this.getAttribute('data-product-id');
+                        openModal();
+
+                        document.getElementById('submitModalButton').onclick = function(){
+                            submitCancellation(orderId,productId)
+                        }
+                    })
+                        
+                });
+
+                if(closeModalBtn){
+                    closeModalBtn.addEventListener('click',closeModal);
+                }
+            });
+
+               
+
+
+
+                // return 
+
+            function openModalreturn(){
+                var modal = document.getElementById('myModalReturn')
+                modal.style.display = 'block';
+            }
+
+            function closeModal(){
+                var modal = document.getElementById('myModalReturn')
+                modal.style.display = 'none'
+            }
+
+
+            function submitReturn(orderId,productId){
+
+                const selectedReason = document.getElementById('selectBoxx').value;
+
+                Swal.fire({
+                    title: `Are you sure?`,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: `Yes`
+
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch('/returnOrder', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                orderId:orderId,
+                                productId:productId,
+                                selectedReason:selectedReason
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                window.location.href = '/orderDetails'
+                            }
+                        })
+
+                    }
+                })
+
+
+            }
+
+            document.addEventListener('DOMContentLoaded',function(){
+
+                var openModalBtnReturn = document.querySelectorAll('.openReturnModalBtn');
+                var closeModalBtnReturn = document.querySelector('.returnClose');
+                
+                openModalBtnReturn.forEach(function(btn){
+                    btn.addEventListener('click',function(){
+                        var orderId = this.getAttribute('data-order-id');
+                        var productId = this.getAttribute('data-product-id');
+                        openModalreturn();
+
+                        document.getElementById('submitModalButtonreturn').onclick = function(){
+                            submitReturn(orderId,productId)
+                        }
+                    })
+                })
+
+                if(closeModalBtnReturn){
+                    closeModalBtnReturn.addEventListener('click', closeModal)
+                }
+
+
+            })
+        </script>
+
+
+
+        <%- include("../layouts/footer.ejs") %>

@@ -1,0 +1,380 @@
+<%- include("../layouts/header.ejs") %>
+    <%- include("../layouts/navbar.ejs") %>
+
+        <style>
+            body {
+                margin-top: 80px;
+                color: #1a202c;
+                text-align: left;
+                background-color: #ecfdff;
+            }
+
+            .main-body {
+                padding: 15px;
+            }
+
+            .card {
+                box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .1), 0 1px 2px 0 rgba(0, 0, 0, .06);
+            }
+
+            .card {
+                position: relative;
+                display: flex;
+                flex-direction: column;
+                min-width: 0;
+                word-wrap: break-word;
+                background-color: #fff;
+                background-clip: border-box;
+                border: 0 solid rgba(0, 0, 0, .125);
+                border-radius: .25rem;
+            }
+
+            .card-body {
+                flex: 1 1 auto;
+                min-height: 1px;
+                padding: 1rem;
+            }
+
+            .gutters-sm {
+                margin-right: -8px;
+                margin-left: -8px;
+            }
+
+            .gutters-sm>.col,
+            .gutters-sm>[class*=col-] {
+                padding-right: 8px;
+                padding-left: 8px;
+            }
+
+            .mb-3,
+            .my-3 {
+                margin-bottom: 1rem !important;
+            }
+
+            .bg-gray-300 {
+                background-color: #e2e8f0;
+            }
+
+            .h-100 {
+                height: 100% !important;
+            }
+
+            .shadow-none {
+                box-shadow: none !important;
+            }
+
+            .buttons {
+                width: 100%;
+                height: 40px;
+                border: none;
+                background-color: rgb(228, 54, 54);
+                color: white;
+                border: 2px;
+                border-radius: 5px;
+                margin-top: 10px;
+            }
+
+            .col-md-8 {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 105vh;
+                /* Set height to fill the viewport */
+
+            }
+
+            /* Additional styles for form container */
+            .form-container {
+                background-color: white;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                width: 80%;
+                /* Adjust width as needed */
+                max-width: 600px;
+                /* Limit maximum width */
+                margin-top: 20px;
+            }
+
+            /* Optional: Style for form elements */
+            .form-container input[type="text"] {
+                width: 100%;
+                padding: 10px;
+                margin-bottom: 10px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                box-sizing: border-box;
+            }
+
+            .capdiv {
+                padding-top: 10px;
+            }
+        </style>
+
+        <div class="container">
+            <div class="main-body">
+
+                <!-- Breadcrumb -->
+                <!-- <nav aria-label="breadcrumb" class="main-breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+      <li class="breadcrumb-item"><a href="javascript:void(0)">User</a></li>
+      <li class="breadcrumb-item active" aria-current="page">User Profile</li>
+    </ol>
+  </nav> -->
+                <!-- /Breadcrumb -->
+
+                <div class="row gutters-sm">
+                    <div class="col-md-4 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="d-flex flex-column align-items-center text-center">
+                                    <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Admin"
+                                        class="rounded-circle" width="150">
+                                    <div class="mt-3">
+                                        <h4>
+                                            <%= userdata.name %>
+                                        </h4>
+                                        <br>
+                                        <br>
+                                        <button class="buttons"><i style="margin-right: 7px;"
+                                                class="fa-solid fa-user"></i>Account Details</button>
+                                        <button class="buttons"><i style="margin-right: 7px;"
+                                                class="fas fa-cart-plus"></i>Orders</button>
+                                        <a href="/userAddress"><button class="buttons"><i style="margin-right: 7px;"
+                                                    class="fa-solid fa-address-book"></i>Address</button></a>
+                                        <button class="buttons"><i style="margin-right: 7px;"
+                                                class="fa-solid fa-wallet"></i>Wallet</button>
+                                        <button class="buttons"><i style="margin-right: 7px;"
+                                                class="fa-solid fa-ticket"></i>Coupons</button>
+                                        <button class="buttons"><i style="margin-right: 7px;"
+                                                class="fa-solid fa-right-from-bracket"></i>Logout</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-md-8">
+                        <div class="form-container">
+                            <h1 style="text-align: center;">Edit Address</h1>
+                            <form action="/updateaddress" method="post" onsubmit="return validate()">
+                                <div class="capdiv ">
+                                    <p>Name*</p>
+                                    <input type="text" placeholder="Enter Name" name="name" id="name"
+                                        value="<%= address.name %>">
+                                    <p id="nameError" style="color: red;"></p>
+                                </div>
+                                <div class="capdiv row mb-3">
+                                    <div class="col">
+                                        <p>City*</p>
+                                        <input type="text" placeholder="Enter City" name="city" id="city"
+                                            value="<%= address.city %>">
+                                        <p id="cityError" style="color: red;"></p>
+                                    </div>
+                                    <div class="col">
+                                        <p>District</p>
+                                        <input type="text" placeholder="Enter District" name="district" id="district"
+                                            value="<%= address.district %>">
+                                        <p id="distError" style="color: red;"></p>
+                                    </div>
+                                </div>
+
+                                <div class="capdiv row mb-3">
+                                    <div class="col">
+                                        <p>State</p>
+                                        <input type="text" placeholder="Enter State" name="state" id="state"
+                                            value="<%= address.state %>">
+                                        <p id="stateError" style="color: red;"></p>
+                                    </div>
+                                    <div class="col">
+                                        <p>Country</p>
+                                        <input type="text" placeholder="Enter Country" name="country" id="country"
+                                            value="<%= address.country %>">
+                                        <p id="countryError" style="color: red;"></p>
+                                    </div>
+                                </div>
+
+                                <div class="capdiv row mb-3">
+                                    <div class="col">
+                                        <p>Mobile</p>
+                                        <input type="text" placeholder="Enter Mobile No" name="mno" id="mno"
+                                            value="<%= address.mobile %>">
+                                        <p id="mnoError" style="color: red;"></p>
+                                    </div>
+                                    <div class="col">
+                                        <p>PinCode</p>
+                                        <input type="text" placeholder="Enter PinCode" name="pincode" id="pincode"
+                                            value="<%= address.pincode %>">
+                                        <p id="pincodeError" style="color: red;"></p>
+                                    </div>
+                                </div>
+
+                                <div style="margin-left: 180px; margin-top: 10px;">
+                                    <button type="button"
+                                        style="border: none; background-color: red; color: white; height: 30px;"
+                                        onclick="editaddress('<%= address._id %>')">Submit</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <script>
+
+            function validate() {
+
+            }
+               
+
+
+            // eidt address 
+
+            function editaddress(id) {
+
+                var nameInput = document.getElementById('name').value.trim();
+                var phoneInput = document.getElementById('mno').value.trim();
+                var pincodeInput = document.getElementById('pincode').value.trim();
+                var cityInput = document.getElementById('city').value.trim();
+                var districtInput = document.getElementById('district').value.trim();
+                var stateInput = document.getElementById('state').value.trim();
+                var countryInput = document.getElementById('country').value.trim();
+
+
+
+
+
+
+                var nameRegex = /^[a-zA-Z\s]*$/;
+                var phoneRegex = /^\d{10}$/;
+                var pincodeRegex = /^\d{6}$/;
+
+                var nameError = document.getElementById('nameError');
+                var phoneError = document.getElementById('mnoError');
+                var pincodeError = document.getElementById('pincodeError')
+                var cityError = document.getElementById('cityError')
+                var districtError = document.getElementById('distError')
+                var stateError = document.getElementById('stateError')
+                var countryError = document.getElementById('countryError')
+
+                nameError.innerText = '';
+                phoneError.innerText = '';
+                pincodeError.innerText = '';
+                cityError.innerText = '';
+                districtError.innerText = '';
+                stateError.innerText = '';
+                countryError.innerText = '';
+
+                var isValid = true;
+
+                if (nameInput == '') {
+                    nameError.innerText = 'Name cannot be empty';
+                    return false;
+
+                } else if (!nameRegex.test(nameInput)) {
+                    nameError.innerText = 'Name can  only contain letters and spaces'
+                    return false
+                }
+
+                if (phoneInput === '') {
+                    phoneError.innerText = 'Phone number cannot be empty';
+                    return false
+                } else if (!phoneRegex.test(phoneInput)) {
+                    phoneError.innerText = 'Phone number must be 10 numbers';
+                    return false
+                }
+
+                if (pincodeInput === '') {
+                    pincodeError.innerText = 'Pincode cannot be empty';
+                    return false
+                } else if (!pincodeRegex.test(pincodeInput)) {
+                    pincodeError.innerText = 'Pincode  must be 6 numbers'
+                    return false
+                }
+
+                if (cityInput == '') {
+                    cityError.innerText = 'City cannot be empty';
+                    return false;
+
+                }
+
+                if (districtInput == '') {
+                    districtError.innerText = 'District cannot be empty';
+                    return false;
+
+                }
+
+                if (stateInput == '') {
+                    stateError.innerText = 'State cannot be empty';
+                    return false;
+
+                }
+
+                if (countryInput == '') {
+                    countryError.innerText = 'Country cannot be empty';
+                    return false;
+
+                }
+
+
+                
+            
+
+                var name = document.getElementById('name').value.trim();
+                var city = document.getElementById('city').value.trim();
+                var district = document.getElementById('district').value.trim();
+                var state = document.getElementById('state').value.trim();
+                var country = document.getElementById('country').value.trim();
+                var mobile = document.getElementById('mno').value.trim();
+                var pincode = document.getElementById('pincode').value.trim();
+
+                var formData = {
+                    id: id,
+                    name: name,
+                    city: city,
+                    district: district,
+                    state: state,
+                    country: country,
+                    mobile: mobile,
+                    pincode: pincode
+                };
+
+                fetch('/updateaddress', {
+
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+
+                })
+                    .then(response => response.json())
+                    .then(data => {
+
+                        if (data.success) {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Success!',
+                                text: 'Address Updated Successfully'
+                            })
+                            .then(()=>{
+                                window.location.href = '/userAddress'
+                            })
+                            
+                        }
+
+
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        
+                    })
+
+                    return isValid
+            }
+
+
+        </script>
+
+        <%- include("../layouts/footer.ejs") %>

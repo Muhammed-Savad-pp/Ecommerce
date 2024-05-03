@@ -1,0 +1,216 @@
+<%- include("../adminLayouts/header.ejs") %>
+<%- include("../adminLayouts/sidenavbar.ejs") %>
+    <main class="main-wrap">
+        <header class="main-header navbar">
+            <div class="col-search">
+                <form class="searchform">
+                    <div class="input-group">
+                        <input list="search_terms" type="text" class="form-control" placeholder="Search term">
+                        <button class="btn btn-light bg" type="button"> <i
+                                class="material-icons md-search"></i></button>
+                    </div>
+                    <datalist id="search_terms">
+                        <option value="Products">
+                        <option value="New orders">
+                        <option value="Apple iphone">
+                        <option value="Ahmed Hassan">
+                    </datalist>
+                </form>
+            </div>
+            <div class="col-nav">
+                <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"> <i
+                        class="material-icons md-apps"></i> </button>
+                <ul class="nav">
+                    <li class="nav-item">
+                        <a class="nav-link btn-icon" href="#">
+                            <i class="material-icons md-notifications animation-shake"></i>
+                            <span class="badge rounded-pill">3</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn-icon darkmode" href="#"> <i class="material-icons md-nights_stay"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="requestfullscreen nav-link btn-icon"><i
+                                class="material-icons md-cast"></i></a>
+                    </li>
+                    <li class="dropdown nav-item">
+                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownLanguage"
+                            aria-expanded="false"><i class="material-icons md-public"></i></a>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownLanguage">
+                            <a class="dropdown-item text-brand" href="#"><img src="assets/imgs/theme/flag-us.png"
+                                    alt="English">English</a>
+                            <a class="dropdown-item" href="#"><img src="assets/imgs/theme/flag-fr.png"
+                                    alt="Français">Français</a>
+                            <a class="dropdown-item" href="#"><img src="assets/imgs/theme/flag-jp.png"
+                                    alt="Français">日本語</a>
+                            <a class="dropdown-item" href="#"><img src="assets/imgs/theme/flag-cn.png"
+                                    alt="Français">中国人</a>
+                        </div>
+                    </li>
+                    <li class="dropdown nav-item">
+                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount"
+                            aria-expanded="false"> <img class="img-xs rounded-circle"
+                                src="assets/imgs/people/avatar-2.png" alt="User"></a>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount">
+                            <a class="dropdown-item" href="#"><i class="material-icons md-perm_identity"></i>Edit
+                                Profile</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-settings"></i>Account
+                                Settings</a>
+                            <a class="dropdown-item" href="#"><i
+                                    class="material-icons md-account_balance_wallet"></i>Wallet</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-receipt"></i>Billing</a>
+                            <a class="dropdown-item" href="#"><i class="material-icons md-help_outline"></i>Help
+                                center</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item text-danger" href="#"><i
+                                    class="material-icons md-exit_to_app"></i>Logout</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </header>
+        <section class="content-main">
+            <div class="row">
+                <div class="col-6">
+                    <div class="content-header">
+                        <h2 class="content-title">Add New Product</h2>
+                        <div>
+                           <a href="/admin/productlist"> <button class="btn btn-light rounded font-sm mr-5 text-body hover-up">ProductList</button></a>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="card mb-4">
+                        <div class="card-body" >
+                            <form action="/admin/addproducts" method="post" enctype="multipart/form-data">
+                                <div class="row">
+                                    <div class="col-md-9">
+                                        <div class="mb-4">
+                                            <label class="form-label" >Product Name</label>
+                                            <input type="text" placeholder="Product Name" name="name" class="form-control">
+                                        </div>
+                                        <%
+                    if(typeof message !== 'undefined'){
+                  %>
+                      <p style="color: red;"><%= message %></p>
+                  <%    
+                    }
+                 %>
+                                        <div class="mb-4">
+                                            <label class="form-label" >Description</label>
+                                            <textarea placeholder="Type here" name="description" class="form-control" rows="4"></textarea>
+                                        </div>
+                                        <div class="mb-4">
+                                            <label class="form-label">Category</label>
+                                            <select name="category" class="form-select">
+                                            <% if(categorys.length>0){ %>                                                
+                                                <%
+                                                for(let i=0; i<categorys.length; i++){ %>
+                                                    <option><%= categorys[i].name %> </option>
+                                                
+                                               <% } %>                       
+                                            
+                                           <% } %>              
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+
+                                    <div class="col-md-9">
+                                        <div class="mb-4">
+                                            <label class="form-label">Price</label>
+                                            <input type="text" name="price" class="form-control" min="1">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+
+                                    <div class="col-md-9">
+                                        <div class="mb-4">
+                                            <label class="form-label" >Stock</label>
+                                            <input type="text" name="stock" class="form-control" min="0">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+
+                                    <div class="col-md-9">
+                                        <div class="mb-4">
+                                            <label class="form-label" >Images</label>
+                                            <input class="form-control" id="imageInput" name="images" type="file" multiple>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <button type="submit" class="btn btn-md rounded font-sm hover-up">AddProduct</button>
+                                </div>
+                               
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6" id="imagePreview"></div>
+            </div>
+            </div>
+        </section>
+
+    </main>
+    <script>
+
+        document.getElementById('imageInput').addEventListener('change',function(event){
+
+            var input = event.target;
+            var files = input.files
+
+            var previewcontainer = document.getElementById('imagePreview');
+
+            previewcontainer.innerHTML ='';
+            
+            for(var i=0; i<files.length; i++){
+
+                var file= files[i]
+
+                var img = document.createElement('img')
+
+                img.classList.add('img-thumbnial','m-2');
+                img.width = 300;
+
+                var reader = new FileReader();
+
+                reader.onload =( function(img){
+                    return function(e){
+                        img.src = e.target.result;
+                    };
+                    
+                })(img)
+
+                reader.readAsDataURL(file);
+
+                previewcontainer.appendChild(img);
+
+            }
+
+
+        })
+
+
+    </script>
+    <script src="assets/js/vendors/jquery-3.6.0.min.js"></script>
+    <script src="assets/js/vendors/bootstrap.bundle.min.js"></script>
+    <script src="assets/js/vendors/select2.min.js"></script>
+    <script src="assets/js/vendors/perfect-scrollbar.js"></script>
+    <script src="assets/js/vendors/jquery.fullscreen.min.js"></script>
+    <!-- Main Script -->
+    <script src="assets/js/main.js?v=1.1" type="text/javascript"></script>
+
+
+    <%- include("../adminLayouts/footer.ejs") %>

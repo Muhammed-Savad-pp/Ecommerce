@@ -1,0 +1,127 @@
+<%- include("../layouts/header.ejs") %>
+  <%- include("../layouts/navbar.ejs") %>
+
+    <section class="container-fluid bg-body-tertiary d-block" style="background-color:#ecfdff;">
+      <div class="row justify-content-center">
+        <div class="col-12 col-md-6 col-lg-4" style="min-width: 500px; margin-top: 50px;">
+          <div class="card bg-white mb-5 mt-5 border-0" style="box-shadow: 0 12px 15px rgba(0, 0, 0, 0.02);">
+            <div class="card-body p-5 text-center">
+
+              <% 
+                if(typeof message !== 'undefined'){
+              %>
+                <p style="color:red"><%=message %></p>
+              <%          
+                }
+               %>
+              <h4>Verify</h4>
+              <p>Your code was sent to you via email</p>
+              <form action="/verify_otp" method="post">
+                <div class="otp-field mb-4">
+                  <input type="number" name="otp" />
+                  <input type="hidden" name="email" value="<%= email
+                %>">
+
+                </div>
+
+                <button class="btn btn-primary mb-3 ">
+                  Verify
+                </button>
+              </form>
+              <div id="timer" style="color: red;">3:00</div>
+              <p class="resend text-muted mb-0" style="display: none;">
+                Resent OTP <a href="" id="requestAgain">Request again</a>
+              </p>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <style>
+      .otp-field {
+        flex-direction: row;
+        column-gap: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .otp-field input {
+        height: 45px;
+        width: 130px;
+        border-radius: 6px;
+        outline: none;
+        font-size: 1.125rem;
+        text-align: center;
+        border: 1px solid #ddd;
+      }
+
+      .otp-field input:focus {
+        box-shadow: 0 1px 0 rgba(0, 0, 0, 0.1);
+      }
+
+      .otp-field input::-webkit-inner-spin-button,
+      .otp-field input::-webkit-outer-spin-button {
+        display: none;
+      }
+
+      .resend {
+        font-size: 12px;
+      }
+
+      .footer {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        color: black;
+        font-size: 12px;
+        text-align: right;
+        font-family: monospace;
+      }
+
+      .footer a {
+        color: black;
+        text-decoration: none;
+      }
+    </style>
+
+    <script>
+      function startTimer(duration, display) {
+        var timer = duration, minutes, seconds;
+        var intervalId = setInterval(function () {
+          minutes = parseInt(timer / 60, 10);
+          seconds = parseInt(timer % 60, 10);
+
+          minutes = minutes < 10 ? "0" + minutes : minutes;
+          seconds = seconds < 10 ? "0" + seconds : seconds;
+
+          display.textContent = minutes + ":" + seconds;
+
+          if (--timer < 0) {
+            clearInterval(intervalId); // Clear the interval when timer reaches 0
+            display.style.display = 'none'; // Hide the timer display
+            document.querySelector('.resend').style.display = 'block'; // Show the "Request again" link
+          }
+        }, 1000);
+      }
+
+      document.addEventListener('DOMContentLoaded', function () {
+        var threeMinutes = 60 * 3,
+          display = document.getElementById('timer');
+        startTimer(threeMinutes, display);
+
+        document.getElementById('requestAgain').addEventListener('click', function (event) {
+          event.preventDefault();
+          display.style.display = 'block';
+          document.querySelector('.resend').style.display = 'none';
+          startTimer(threeMinutes, display);
+        });
+      });
+
+    </script>
+
+
+    <%- include("../layouts/footer.ejs") %>
