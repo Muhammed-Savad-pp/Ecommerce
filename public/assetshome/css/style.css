@@ -2245,20 +2245,7 @@ ul {
 }
 
 /* line 130, ../../01 cl html template/03_jun 2019/188_Aranoz shop_html/sass/_menu.scss */
-.main_menu .cart i:after {
-  position: absolute;
-  border-radius: 50%;
-  background-color: #f13d80;
-  width: 14px;
-  height: 14px;
-  right: -8px;
-  top: -8px;
-  content: "5";
-  text-align: center;
-  line-height: 15px;
-  font-size: 10px;
-  color: #fff;
-}
+
 
 /* line 151, ../../01 cl html template/03_jun 2019/188_Aranoz shop_html/sass/_menu.scss */
 .menu_fixed {

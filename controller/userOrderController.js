@@ -1,8 +1,10 @@
 
 const User = require('../model/user_model');
 const Order = require('../model/order_model');
-const Product = require('../model/product_model')
-
+const Product = require('../model/product_model');
+const Wallet = require('../model/wallet_model')
+const Cart = require('../model/cart_model');
+const Wishilist = require('../model/wishilist_modal')
 
 const LoadOrderDatails = async(req,res)=> {
 
@@ -13,7 +15,13 @@ const LoadOrderDatails = async(req,res)=> {
 
         const orderdata = await Order.find({userId:userid}).populate('items.productId')
 
-        res.render('userOrderDetailsPage',{userdata:userdata,orderDatas:orderdata})
+        const carts = await Cart.findOne({ userId: userid }).populate("product.productId");
+        const cartsdata = carts ? carts.product : [];
+
+        const wishilist = await Wishilist.findOne({userId:userid}).populate('items.productId')
+        const wishilistData = wishilist ? wishilist.items : [];
+
+        res.render('userOrderDetailsPage',{userdata:userdata,orderDatas:orderdata,cartsdata, wishilistData})
         
     } catch (error) {
         console.log(error.message);
@@ -29,8 +37,15 @@ const LoadSingleOrderDeatails = async(req,res) =>{
         //console.log('orderid',orderid);
         const orderData = await Order.findOne({userId:userid,orderId:orderid}).populate('items.productId')
         const userData = await User.findById({_id:userid})
+
+        const carts = await Cart.findOne({ userId: userid }).populate("product.productId");
+        const cartsdata = carts ? carts.product : [];
+
+        const wishilist = await Wishilist.findOne({userId:userid}).populate('items.productId')
+        const wishilistData = wishilist ? wishilist.items : [];
+        
         //console.log(orderData);
-        res.render('viewSingleOrderdetails',{orderData:orderData, userData:userData})
+        res.render('viewSingleOrderdetails',{orderData:orderData, userData:userData,cartsdata,wishilistData})
 
     } catch (error) {
         console.log(error.message);
@@ -45,6 +60,7 @@ const cancelorder = async(req,res)=>{
         const orderId = req.body.orderId;
         const productId = req.body.productId;
         const cancelReason = req.body.selectedReason;
+        const userid = req.session.user_id;
        
         const cancelData = await Order.findOneAndUpdate(
                 {orderId:orderId,'items.productId':productId},
@@ -69,6 +85,46 @@ const cancelorder = async(req,res)=>{
             product.quantity += canceledQuantity;
            
             await product.save();
+
+            var walletAmount = product.price * canceledQuantity
+            if(cancelData.paymentMethod == 'razorPay'){
+
+                const wallet = await Wallet.findOne({UserId:userid});
+
+                if(wallet){
+
+                    const updateBalance = wallet.balance + walletAmount;
+                    wallet.balance = updateBalance;
+
+                    wallet.history.push({
+                        amount:walletAmount,
+                        transactionType:'Refund'
+                    })
+
+                    await wallet.save()
+                    res.status(200).json({success:true})
+
+                }else{
+
+                    const data = new Wallet({
+
+                        UserId:userid,
+                        balance:walletAmount,
+                        history:[{
+                            amount:walletAmount,
+                            transactionType:'Refund'
+                        }]
+
+                    })
+                    await data.save()
+                    res.status(200).json({success:true})
+                }
+
+
+            }
+           
+
+
             res.status(200).json({success:true})
 
         }
@@ -115,9 +171,29 @@ const returnOrder = async(req,res)=>{
 
 }
 
+const ChangeUserOrderPaymentStatus = async(req,res)=>{
+
+    try {
+
+        const { orderid, userid, paymentStatus} = req.body;
+
+        const updateData = await Order.findOneAndUpdate({userId:userid,orderId:orderid},{$set:{paymentStatus:paymentStatus}},{new:true})
+
+        if(updateData){
+            res.json({success:true})
+        }
+        
+    } catch (error) {
+        console.log(error.message);
+    }
+
+
+}
+
 module.exports = {
     LoadOrderDatails,
     LoadSingleOrderDeatails,
     cancelorder,
-    returnOrder
+    returnOrder,
+    ChangeUserOrderPaymentStatus
 }

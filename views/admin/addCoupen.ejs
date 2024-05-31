@@ -104,8 +104,8 @@
                                                 <% } %>
                                                     <div class="mb-4">
                                                         <label class="form-label">Description</label>
-                                                        <textarea placeholder="Type here" name="description" id="description"
-                                                            class="form-control" rows="4"></textarea>
+                                                        <textarea placeholder="Type here" name="description"
+                                                            id="description" class="form-control" rows="4"></textarea>
                                                     </div>
 
                                         </div>
@@ -116,7 +116,8 @@
                                         <div class="col-md-9">
                                             <div class="mb-4">
                                                 <label class="form-label">MinPrice</label>
-                                                <input type="text" name="MinPrice" class="form-control" min="1" id="MinPrice">
+                                                <input type="text" name="MinPrice" class="form-control" min="1"
+                                                    id="MinPrice">
                                             </div>
                                         </div>
                                     </div>
@@ -126,12 +127,23 @@
                                         <div class="col-md-9">
                                             <div class="mb-4">
                                                 <label class="form-label">Discount</label>
-                                                <input type="text" name="discount" class="form-control" min="1" id="Discount">
+                                                <input type="text" name="discount" class="form-control" min="1"
+                                                    id="Discount">
                                             </div>
                                         </div>
                                     </div>
 
-                                   
+                                    <div class="row">
+
+                                        <div class="col-md-9">
+                                            <div class="mb-4">
+                                                <label class="form-label">Validity</label>
+                                                <input type="date" class="form-control" id="validity">
+                                            </div>
+                                        </div>
+                                    </div>
+
+
                                     <div>
                                         <button type="button" onclick="addcoupen()"
                                             class="btn btn-md rounded font-sm hover-up">AddCoupen</button>
@@ -150,51 +162,79 @@
 
         <script>
 
-            function addcoupen(){
-                
+            function addcoupen() {
+
 
                 var code = document.getElementById('code').value.trim()
                 var description = document.getElementById('description').value.trim()
                 var MinPrice = document.getElementById('MinPrice').value.trim()
                 var discount = document.getElementById('Discount').value.trim()
+                var validity = document.getElementById('validity').value.trim();
                 console.log(code);
-                
 
-               
-                
+                const today = new Date();
 
-                fetch('/admin/addCoupen',{
-                    method:'POST',
-                    headers:{
-                        'Content-Type': 'application/json'
-                    },
-                    body:JSON.stringify({
-                        
-                        code:code,
-                        description:description,
-                        MinPrice:MinPrice,
-                        discount:discount
+                // Set the time to 00:00:00 to only compare the dates
+                today.setHours(0, 0, 0, 0);
+
+                // Calculate tomorrow's date
+                const tomorrow = new Date(today);
+                tomorrow.setDate(tomorrow.getDate() + 1);
+
+                const validityDate = new Date(validity);
+
+                if (validityDate < tomorrow) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Please Select tomorrow onwards date',
+                        showConfirmButton: false,
+                        timer: 1000,
+                        timerProgressBar: true
                     })
-                })
-                .then(response => response.json())
-                .then(data =>{
-                    if(data.success){
-                        window.location.href = '/admin/coupens'
-                    }else{
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'Coupen Already Exicts',
-                            showConfirmButton: false,
-                            timer: 1000,
-                            timerProgressBar: true
-                         })
-                    }
-                })
-               
+                    return
+                } 
+
+                    fetch('/admin/addCoupen', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+
+                            code: code,
+                            description: description,
+                            MinPrice: MinPrice,
+                            discount: discount,
+                            validity: validity
+                        })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                window.location.href = '/admin/coupens'
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'Coupen Already Exicts',
+                                    showConfirmButton: false,
+                                    timer: 1000,
+                                    timerProgressBar: true
+                                })
+                            }
+                        })
+
+
+                
+
+
+
+
+
 
             }
- 
+
 
         </script>
 

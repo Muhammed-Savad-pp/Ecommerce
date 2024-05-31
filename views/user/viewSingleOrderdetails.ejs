@@ -16,7 +16,6 @@
                 display: flex;
                 justify-content: center;
                 align-items: center;
-
             }
 
             .center-div {
@@ -24,19 +23,18 @@
                 height: 100%;
                 background-color: white;
                 margin-top: 90px;
+                position: relative;
+                /* Needed for the absolute positioning of the button */
             }
 
             .first-div {
-
                 margin-top: 25px;
                 margin-left: 20px;
             }
 
             .second-div {
-
                 margin-left: 55px;
                 margin-top: 25px;
-
             }
 
             .third-div {
@@ -45,15 +43,13 @@
             }
 
             .top-div {
-
                 margin-top: 20px;
-
             }
 
             .prode {
                 height: 100%;
                 margin-left: 30px;
-                margin-right: 10px
+                margin-right: 10px;
             }
 
             /* Modal styles */
@@ -90,12 +86,12 @@
                 cursor: pointer;
             }
 
-            .returnClose{
+            .returnClose {
                 position: absolute;
                 top: 10px;
                 right: 20px;
                 font-size: 28px;
-                cursor: pointer; 
+                cursor: pointer;
             }
 
             /* Style the button inside the modal */
@@ -111,225 +107,311 @@
             .modal-content button:hover {
                 background-color: #0056b3;
             }
+
+            /* Position the PDF button in the top right corner */
+            .pdf-button-container {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+            }
+
+            .pdf-button-container button {
+                padding: 10px 20px;
+                background-color: #007bff;
+                color: #fff;
+                border: none;
+                cursor: pointer;
+                font-size: 16px;
+            }
+
+            .pdf-button-container button:hover {
+                background-color: #0056b3;
+            }
         </style>
 
+        <div class="center-div">
 
+          
 
-        <div class="container-fluid center">
-            <div class="center-div">
-                <div class="col-lg-12 top-div">
-                    <h4>Date : <%= orderData.currendDate.toLocaleDateString('en-US', { day: 'numeric' , month: 'short' ,
-                            year: 'numeric' }) %>
-                    </h4>
-                    <p>Order ID : #<%= orderData.orderId %>
-                    </p>
-                    <hr>
-                </div>
-                <div class="row" style="margin-left: 10px;">
-                    <div class="col-md-3 first-div">
-
-                        <h4><i style="color: rgb(31, 31, 44);" class="fa-solid fa-user"></i> Customer</h4>
-
-                        <p style="font-size: 18px; font-weight: 400;margin-bottom: 0rem;">
-                            <%= userData.name %>
-                        </p>
-                        <p style="font-size: 18px; font-weight: 400; margin-bottom: 0rem;">
-                            <%= userData.email %>
-                        </p>
-                        <p style="font-size: 18px; font-weight: 400; margin-bottom: 0rem;">
-                            <%= userData.mobile %>
-                        </p>
-
-                    </div>
-                    <div class="col-md-3 second-div">
-                        <h4><i class="fa-solid fa-truck"></i> Order Info</h4>
-                        <p><span style="font-size: 18px; font-weight: 400;">Pay Method: </span>
-                            <%= orderData.paymentMethod %>
-                        </p>
-                    </div>
-                    <div class="col-md-3 third-div">
-                        <h4><i class="fa-solid fa-location-dot"></i> Deliver to</h4>
-                        <% if (orderData && orderData.address && orderData.address.length> 0) { %>
-                            <% orderData.address.forEach((address)=> { %>
-                                <p style="margin-bottom: 0rem;">
-                                    <%= address.name %>
-                                </p>
-                                <p style="margin-bottom: 0rem;">
-                                    <%= address.city %>
-                                </p>
-                                <p style="margin-bottom: 0rem;">
-                                    <%= address.district %>
-                                </p>
-                                <p style="margin-bottom: 0rem;">
-                                    <%= address.state %>
-                                </p>
-                                <p style="margin-bottom: 0rem;">
-                                    <%= address.country %>
-                                </p>
-                                <p style="margin-bottom: 0rem;">
-                                    <%= address.pincode %>
-                                </p>
-                                <p style="margin-bottom: 0rem;">
-                                    <%= address.mobile %>
-                                </p>
-
-
-                                <% }); %>
-                                    <% } else { %>
-                                        <p>No address found</p>
-                                        <% } %>
-                    </div>
-
-
-                </div>
+            <div class="col-lg-12 top-div">
+                <h4>Date: <%= orderData.currendDate.toLocaleDateString('en-US', { day: 'numeric' , month: 'short' ,
+                        year: 'numeric' }) %>
+                </h4>
+                <p>Order ID: #<%= orderData.orderId %>
+                </p>
                 <hr>
-
-
-                <% if(orderData.items.length> 0){ %>
-                    <% orderData.items.forEach(product=> { %>
-                        <div class="col-lg-11 prode">
-
-
-                            <div class="row" style="margin-left: 0px;">
-                                <div style="width: 80px;  ">
-                                    <img src="<%= product.productId.image[0] %>" alt="fsdfdff"
-                                        style="width: 80px; height: 80px;">
-                                </div>
-                                <div style="margin-left: 45px; width: 170px;">
-                                    <br>
-                                    <p style="font-size: 20px; font-weight: 500;">
-                                        <%= product.productId.pname %>
-                                    </p>
-                                </div>
-                                <div style="margin-left: 25px;">
-                                    <p>Price</p>
-                                    <p style="font-size: 16px; font-weight: 500;">₹<%= product.price %>
-                                    </p>
-                                </div>
-
-                                <div style="margin-left: 90px;">
-                                    <p>QTY</p>
-                                    <p style="font-size: 16px; font-weight: 500;">
-                                        <%= product.quantity %>
-                                    </p>
-                                </div>
-                                <div style="margin-left: 70px;">
-
-                                    <p>Status</p>
-                                    <p style="font-size: 16px; font-weight: 500; color: rgb(9, 117, 9);">
-                                        <%= product.Status %>
-                                    </p>
-                                </div>
-                                <div style="margin-left: 90px;">
-                                    <br>
-                                    <% if(product.Status !='Cancelled' && product.Status !='Delivered' && product.Status !='Return') { %>
-                                        <button class="btn btn-danger openModalBtn"  type="button" 
-                                            data-order-id ='<%= orderData.orderId %>'
-                                            data-product-id ="<%= product.productId._id %>"> Cancel</button>
-                                       
-                                        </button>
-
-                                        <% } else if (product.Status=='Delivered' && orderData.approvel == 0){ %>
-                                            <button class="btn btn-danger openReturnModalBtn" type="button"
-                                            data-order-id ='<%= orderData.orderId %>'
-                                            data-product-id ="<%= product.productId._id %>"
-                                                id="openModalBtn">Return
-                                            </button>
-
-                                        <% } else if(orderData.approvel == 1){ %>
-                                            <p class="btn btn-rounded " style="padding: 1px; font-size: 10px; background-color:green; color:white; font-weight: 500;">Request Sended</p>
-                                        <% } else if(orderData.approvel == 3){ %>
-                                            <p class="btn btn-rounded " style="padding: 1px; font-size: 10px; background-color:green; color:white; font-weight: 500;">Retrun Declined</p>
-                                        <% } %>
-
-                                </div>
-
-
-                                
-                            </div>
-                            <hr>
-                        </div>
-                        <br>
-                        <% }) %>
-                            <% } %>
-
             </div>
-
-            
-
-        </div>
-            <!-- cancel modal -->
-            <div id="myModal" class="modal">
-                <div class="modal-content">
-                    <span class="close">&times;</span>
-                    <h2 style="margin-left: 110px; color: black;">Select Cancellation Reason</h2>
-                    <hr>
-                    <select id="selectBox" style="width: 100%; height: 40px;">
-                        <option value="Order Created by Mistake">Order Created by Mistake</option>
-                        <option value="Items Would Not Arrive on Time">Items Would Not Arrive on
-                            Time</option>
-                        <option value="Item Price Too High">Item Price Too High</option>
-                        <option value="Need to Change Shipping Address">Need to Change Shipping
-                            Address</option>
-                        <option value="Need to Change Payment Method">Need to Change Payment Method
-                        </option>
-                        <option value="Other">Other</option>
-                        <!-- Other options -->
-                    </select>
-                    <button class="btn btn-Success"
-                        style="width: 90px; margin-left: 200px; margin-top: 10px;"
-                        id="submitModalButton">Submit</button>
-
+            <div class="row" style="margin-left: 10px;">
+                <div class="col-md-3 first-div">
+                    <h4><i style="color: rgb(31, 31, 44);" class="fa-solid fa-user"></i> Customer</h4>
+                    <p style="font-size: 18px; font-weight: 400;margin-bottom: 0rem;">
+                        <%= userData.name %>
+                    </p>
+                    <p style="font-size: 18px; font-weight: 400; margin-bottom: 0rem;">
+                        <%= userData.email %>
+                    </p>
+                    <p style="font-size: 18px; font-weight: 400; margin-bottom: 0rem;">
+                        <%= userData.mobile %>
+                    </p>
+                </div>
+                <div class="col-md-3 second-div">
+                    <h4><i class="fa-solid fa-truck"></i> Order Info</h4>
+                    <p><span style="font-size: 18px; font-weight: 400;">Pay Method: </span>
+                        <%= orderData.paymentMethod %>
+                    </p>
+                </div>
+                <div class="col-md-3 third-div">
+                    <h4><i class="fa-solid fa-location-dot"></i> Deliver to</h4>
+                    <% if (orderData && orderData.address && orderData.address.length> 0) { %>
+                        <% orderData.address.forEach((address)=> { %>
+                            <p style="margin-bottom: 0rem;">
+                                <%= address.name %>
+                            </p>
+                            <p style="margin-bottom: 0rem;">
+                                <%= address.city %>
+                            </p>
+                            <p style="margin-bottom: 0rem;">
+                                <%= address.district %>
+                            </p>
+                            <p style="margin-bottom: 0rem;">
+                                <%= address.state %>
+                            </p>
+                            <p style="margin-bottom: 0rem;">
+                                <%= address.country %>
+                            </p>
+                            <p style="margin-bottom: 0rem;">
+                                <%= address.pincode %>
+                            </p>
+                            <p style="margin-bottom: 0rem;">
+                                <%= address.mobile %>
+                            </p>
+                            <% }); %>
+                                <% } else { %>
+                                    <p>No address found</p>
+                                    <% } %>
                 </div>
             </div>
+            <hr>
+            <% if (orderData.items.length> 0) { %>
+                <% orderData.items.forEach(product=> { %>
+                    <div class="col-lg-11 prode">
+                        <div class="row" style="margin-left: 0px;">
+                            <div style="width: 80px;">
+                                <img src="<%= product.productId.image[0] %>" alt="fsdfdff"
+                                    style="width: 80px; height: 80px;">
+                            </div>
+                            <div style="margin-left: 45px; width: 170px;">
+                                <br>
+                                <p style="font-size: 20px; font-weight: 500;">
+                                    <%= product.productId.pname %>
+                                </p>
+                            </div>
+                            <div style="margin-left: 25px;">
+                                <p>Price</p>
+                                <p style="font-size: 16px; font-weight: 500;">₹<%= product.price %>
+                                </p>
+                            </div>
+                            <div style="margin-left: 90px;">
+                                <p>QTY</p>
+                                <p style="font-size: 16px; font-weight: 500;">
+                                    <%= product.quantity %>
+                                </p>
+                            </div>
+                            <div style="margin-left: 70px;">
+                                <p>Status</p>
+                                <p style="font-size: 16px; font-weight: 500; color: rgb(9, 117, 9);">
+                                    <%= product.Status %>
+                                </p>
+                            </div>
+                            <div style="margin-left: 90px;">
+                                <br>
+                                <% if (product.Status !='Cancelled' && product.Status !='Delivered' && product.Status
+                                    !='Return'  && orderData.paymentStatus != ['Pending','Failed'] ) { %>
+                                    <button class="btn btn-danger openModalBtn" type="button"
+                                        data-order-id='<%= orderData.orderId %>'
+                                        data-product-id="<%= product.productId._id %>">Cancel</button>
+                                    <% } else if (product.Status=='Delivered' && orderData.approvel==0 ) { %>
+                                        <button class="btn btn-danger openReturnModalBtn" type="button"
+                                            data-order-id='<%= orderData.orderId %>'
+                                            data-product-id="<%= product.productId._id %>">Return</button>
+                                        <% } else if (orderData.approvel==1 && product.Status=='Delivered') { %>
+                                            <p class="btn btn-rounded"
+                                                style="padding: 1px; font-size: 10px; background-color:green; color:white; font-weight: 500;">
+                                                Request Sended</p>
+                                            <% } else if (orderData.approvel==3) { %>
+                                                <p class="btn btn-rounded"
+                                                    style="padding: 1px; font-size: 10px; background-color:green; color:white; font-weight: 500;">
+                                                    Return Declined</p>
+                                                <% } %>
+                            </div>
+                            <div style="margin-left: 30px; margin-top: 30px;">
+                                <button id="dwnld-invoice" style=" border: none; background-color: green; color: white;">Invoice
+                                    Download</button>
+                            </div>
+                        </div>
+                        <hr>
+                    </div>
+                    <br>
+                    <div class="container">
+                        <div >
+                           <div class="row" style="margin-left: 100px; margin-bottom: 30px;" >
+                            <div style="font-size: 18px; font-weight: 500;">
+                                Total Amount : <%= orderData.totalAmount %>
+                            </div>
+                            <div style="margin-left: 100px; font-size: 18px; font-weight: 500;">
+                                Discount : <%= orderData.discount %> 
+                            </div>
+                            </div>
+                            
+                        </div>
+                    
+                    </div>
+
+                    <table class="invoice-table d-none      " id="invoice-table-<%= product.productId._id %>">
+
+                        <tr>
+                            <th colspan="2">Sold by :</th>
+
+                            <th colspan="3">Billing Address:</th>
+                        </tr>
+
+                        <tbody>
+                            <tr>
+                                <td colspan="2">
+                                    Zakio. pvt ltd ,<br>
+                                    KINFRA Techno Industrial Park,<br>
+                                    National Highway 66 <br>
+                                    near Calicut University <br>
+                                    Kakkanchery Chelembra PO,<br>
+                                    Dt, Thenhipalam, Kerala 673634
+                                </td>
+                                <input type="hidden" id="product-id" value="<%= product.productId._id %>">
+
+                                <% if (orderData && orderData.address && orderData.address.length> 0) { %>
+                                    <% orderData.address.forEach((address)=> { %>
+                                        <td colspan="3">
+                                            <%= address.name %> <br>
+                                                <%= address.city %> <br>
+                                                    <%= address.district %> <br>
+                                                        <%= address.state %> <br>
+                                        </td>
+
+                                        <% }) %>
+                                            <% } %>
+                            </tr>
+                            <td>
+                                Order ID : <%= orderData.orderId %> <br>
+                                    Order Date : <%= orderData.currendDate.toLocaleDateString('en-US',{day: 'numeric' ,
+                                        month: 'short' , year: 'numeric' })%>
+                            </td>
 
 
-            <!-- return modal -->
+                        </tbody>
+                        <tr style="font-weight: bold;" class="mt-5">
+                            <th>No.</th>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Qty</th>
+                            <th>Total</th>
+                        </tr>
 
+                        <tr>
+                        </tr>
+
+                        <%let count=0;%>
+                            <% count++ %>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <%= count %>.
+                                        </td>
+                                        <td>
+                                            <%= product.productId.pname %>
+                                        </td>
+                                        <td>₹<%= product.price %>
+                                        </td>
+                                        <td>
+                                            <%= product.quantity %>
+                                        </td>
+                                        <td>₹<%= product.quantity*product.price %>
+                                        </td>
+
+                                    </tr>
+                                </tbody>
+
+                                <tr>
+                                    <td colspan="4">Total</td>
+                                    <td colspan="1">₹<%= product.quantity*product.price %>
+                                    </td>
+                                </tr>
+
+
+                    </table>
+                    <% }); %>
+                        <% } %>
+        </div>
+
+
+        <!-- cancel modal -->
+        <div id="myModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2 style="margin-left: 110px; color: black;">Select Cancellation Reason</h2>
+                <hr>
+                <select id="selectBox" style="width: 100%; height: 40px;">
+                    <option value="Order Created by Mistake">Order Created by Mistake</option>
+                    <option value="Items Would Not Arrive on Time">Items Would Not Arrive on Time</option>
+                    <option value="Item Price Too High">Item Price Too High</option>
+                    <option value="Need to Change Shipping Address">Need to Change Shipping Address</option>
+                    <option value="Need to Change Payment Method">Need to Change Payment Method</option>
+                    <option value="Other">Other</option>
+                    <!-- Other options -->
+                </select>
+                <button class="btn btn-Success" style="width: 90px; margin-left: 200px; margin-top: 10px;"
+                    id="submitModalButton">Submit</button>
+            </div>
+        </div>
+
+        <!-- return modal -->
         <div id="myModalReturn" class="modal">
             <div class="modal-content">
                 <span class="returnClose">&times;</span>
                 <h2 style="margin-left: 110px; color: black;">Select Return Reason</h2>
                 <hr>
                 <select id="selectBoxx" style="width: 100%; height: 40px;">
-                    <option value="Recieved Wrong Item">Recieved Wrong Item</option>
+                    <option value="Received Wrong Item">Received Wrong Item</option>
                     <option value="Defective or Damaged Product">Defective or Damaged Product</option>
                     <option value="Wrong Size or Fit">Wrong Size or Fit</option>
                     <option value="Unsatisfactory Quality">Unsatisfactory Quality</option>
                     <option value="Late Delivery">Late Delivery</option>
                     <option value="Other">Other</option>
-                     Other options 
-                </select>
-                <button class="btn btn-Success"
-                    style="width: 90px; margin-left: 200px; margin-top: 10px;"
+                    <!-- Other options -->
+                </select>                                                  
+                <button class="btn btn-Success" style="width: 90px; margin-left: 200px; margin-top: 10px;"
                     id="submitModalButtonreturn">Submit</button>
-
             </div>
         </div>
 
-
-
-
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
 
 
         <script>
-
-              // cancel 
-            function openModal(){
+            // cancel 
+            function openModal() {
                 var modal = document.getElementById('myModal');
                 modal.style.display = 'block';
             }
 
-            function closeModal(){
+            function closeModal() {
                 var modal = document.getElementById('myModal');
                 modal.style.display = 'none';
             }
 
-
             function submitCancellation(orderId, productId) {
-
                 const selectedReason = document.getElementById('selectBox').value;
-                console.log(selectedReason,'selectedReason');
+                console.log(selectedReason, 'selectedReason');
 
                 Swal.fire({
                     title: `Are you sure?`,
@@ -338,7 +420,6 @@
                     confirmButtonColor: '#3085d6',
                     cancelButtonColor: '#d33',
                     confirmButtonText: `Yes`
-
                 }).then((result) => {
                     if (result.isConfirmed) {
                         fetch('/cancelOrder', {
@@ -349,63 +430,52 @@
                             body: JSON.stringify({
                                 orderId: orderId,
                                 productId: productId,
-                                selectedReason:selectedReason
+                                selectedReason: selectedReason
                             })
                         })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                window.location.href = '/orderDetails'
-                            }
-                        })
-
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    window.location.href = '/orderDetails'
+                                }
+                            })
                     }
                 })
             }
 
             document.addEventListener('DOMContentLoaded', function () {
-                    
                 var openModalBtns = document.querySelectorAll('.openModalBtn');
                 var closeModalBtn = document.querySelector('.close');
 
-                    
-                openModalBtns.forEach(function(btn) {
-                    btn.addEventListener('click', function(){
+                openModalBtns.forEach(function (btn) {
+                    btn.addEventListener('click', function () {
                         var orderId = this.getAttribute('data-order-id');
                         var productId = this.getAttribute('data-product-id');
                         openModal();
 
-                        document.getElementById('submitModalButton').onclick = function(){
-                            submitCancellation(orderId,productId)
+                        document.getElementById('submitModalButton').onclick = function () {
+                            submitCancellation(orderId, productId);
                         }
-                    })
-                        
+                    });
                 });
 
-                if(closeModalBtn){
-                    closeModalBtn.addEventListener('click',closeModal);
+                if (closeModalBtn) {
+                    closeModalBtn.addEventListener('click', closeModal);
                 }
             });
 
-               
-
-
-
-                // return 
-
-            function openModalreturn(){
-                var modal = document.getElementById('myModalReturn')
+            // return 
+            function openModalreturn() {
+                var modal = document.getElementById('myModalReturn');
                 modal.style.display = 'block';
             }
 
-            function closeModal(){
-                var modal = document.getElementById('myModalReturn')
-                modal.style.display = 'none'
+            function closeModal() {
+                var modal = document.getElementById('myModalReturn');
+                modal.style.display = 'none';
             }
 
-
-            function submitReturn(orderId,productId){
-
+            function submitReturn(orderId, productId) {
                 const selectedReason = document.getElementById('selectBoxx').value;
 
                 Swal.fire({
@@ -415,7 +485,6 @@
                     confirmButtonColor: '#3085d6',
                     cancelButtonColor: '#d33',
                     confirmButtonText: `Yes`
-
                 }).then((result) => {
                     if (result.isConfirmed) {
                         fetch('/returnOrder', {
@@ -424,49 +493,69 @@
                                 'Content-Type': 'application/json'
                             },
                             body: JSON.stringify({
-                                orderId:orderId,
-                                productId:productId,
-                                selectedReason:selectedReason
+                                orderId: orderId,
+                                productId: productId,
+                                selectedReason: selectedReason
                             })
                         })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                window.location.href = '/orderDetails'
-                            }
-                        })
-
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    window.location.reload()
+                                }
+                            })
                     }
                 })
-
-
             }
 
-            document.addEventListener('DOMContentLoaded',function(){
-
+            document.addEventListener('DOMContentLoaded', function () {
                 var openModalBtnReturn = document.querySelectorAll('.openReturnModalBtn');
                 var closeModalBtnReturn = document.querySelector('.returnClose');
-                
-                openModalBtnReturn.forEach(function(btn){
-                    btn.addEventListener('click',function(){
+
+                openModalBtnReturn.forEach(function (btn) {
+                    btn.addEventListener('click', function () {
                         var orderId = this.getAttribute('data-order-id');
                         var productId = this.getAttribute('data-product-id');
                         openModalreturn();
 
-                        document.getElementById('submitModalButtonreturn').onclick = function(){
-                            submitReturn(orderId,productId)
+                        document.getElementById('submitModalButtonreturn').onclick = function () {
+                            submitReturn(orderId, productId);
                         }
-                    })
-                })
+                    });
+                });
 
-                if(closeModalBtnReturn){
-                    closeModalBtnReturn.addEventListener('click', closeModal)
+                if (closeModalBtnReturn) {
+                    closeModalBtnReturn.addEventListener('click', closeModal);
                 }
+            });
 
 
-            })
         </script>
 
+        <script>
 
+
+            document.getElementById("dwnld-invoice").addEventListener("click", function () {
+                let doc = new window.jspdf.jsPDF();
+                let pageCenter = doc.internal.pageSize.getWidth() / 2;
+
+                let productId = document.getElementById("product-id").value;
+                console.log("productId:", productId)
+
+                doc.setFontSize(20);
+                doc.text("Zakio.", pageCenter, 8, { align: 'center' });
+                doc.setFontSize(15);
+                doc.text(`Invoice / Bill`, pageCenter, 20, { align: 'center' });
+
+                // let table = document.querySelector(".invoice-table");
+                let table = document.getElementById(`invoice-table-${ productId }`);
+
+                doc.autoTable({ html: table, startY: 35 });
+
+                doc.save(`invoice.pdf`);
+            });
+
+
+        </script>
 
         <%- include("../layouts/footer.ejs") %>

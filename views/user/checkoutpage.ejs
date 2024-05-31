@@ -121,6 +121,35 @@
                 <div class="billing_details">
                     <div class="row">
                         <div class="col-lg-8">
+                            <div class="cupon_area" style="margin-left: -20px;">
+                                <div class="check_title">
+                                    <h2>
+                                        Have a coupon?
+                                        <a href="#" id="couponToggle">Click here to enter your code</a>
+                                        <div id="couponDetails" style="display: none; background-color: white;">
+                                            <% if(coupenData){ %>
+                                                <% coupenData.forEach(cou=>{ %>
+                                                    <% if(cou.is_active==true){ %>
+                                                        <p style="margin-bottom: 5px; margin-left: 10px;"> You Get <span
+                                                                style="color: red; font-size: 18px; font-weight: 400;">
+                                                                <%= cou.discount %>%
+                                                            </span>,
+                                                            Coupen Code : <span
+                                                                style="font-size: 18px; color:red; font-weight: 400;">
+                                                                <%= cou.coupenCode %>
+                                                            </span> </p>
+                                                        <% } %>
+                                                            <% }) %>
+                                                                <% } %>
+                                        </div>
+                                    </h2>
+                                </div>
+                                <input type="text" placeholder="Enter coupon code" id="code" />
+                                <a class="tp_btn" href="#" onclick="applyCoupen()">Apply Coupon</a>
+                                <% if(req.session.coupenCode){ %>
+                                    <a class="tp_btn" onclick="RemoveCoupen()" href="#"> Remove Coupen</a>
+                                    <% } %>
+                            </div>
                             <div class="col-md-12" style="display: flex; justify-content: end; margin-bottom: 10px;  ">
                                 <button id="openModalBtn" class="btn btn-success">+ Add New Address</button>
                             </div>
@@ -197,11 +226,33 @@
                                             <span>₹ 0.00</span>
                                         </a>
                                     </li>
-                                    <li>
-                                        <a href="#">Total
-                                            <span>₹ <%= totalamount %></span>
-                                        </a>
-                                    </li>
+                                    <% if(req.session.discount){ %>
+                                        <li>
+                                            <a href="#" id="discount">Discount
+                                                <span style="color: rgb(239, 51, 51);">₹ <%= (totalamount *
+                                                        req.session.discount / 100).toFixed(2) %></span>
+                                            </a>
+                                        </li>
+                                        <% } %>
+
+                                            <li>
+                                                <!-- <a href="#" id="amount">Total
+                                            <span> </span>
+                                        </a> -->
+                                                <% if(req.session.coupenCode){ %>
+                                                    <p style="font-weight: 500;" id="amount">
+                                                        Total <span style="margin-left: 210px;"> ₹<%= totalamount -
+                                                                (totalamount * req.session.discount/100) %></span>
+                                                    </p>
+
+                                                    <% } else { %>
+                                                        <p style="font-weight: 500;" id="amount">
+                                                            Total <span style="margin-left: 210px;"> ₹<%= totalamount %>
+                                                                    </span>
+                                                        </p>
+                                                        <% } %>
+
+                                            </li>
                                 </ul>
                                 <br>
                                 <div class="payment_options">
@@ -215,9 +266,9 @@
                                     </div>
                                     <div class="payment_item active">
                                         <div class="radion_btn">
-                                            <input type="radio" id="paypal" name="paymentMethod" value="paypal" />
+                                            <input type="radio" id="paypal" name="paymentMethod" value="razorPay" />
                                             <label for="paypal">RazoPay</label>
-                                           
+
                                             <div class="check"></div>
                                         </div>
                                     </div>
@@ -296,8 +347,10 @@
         </section>
 
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <script>
+        <!-- Include Razorpay library -->
+        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
+        <script>
 
 
             $(document).ready(function () {
@@ -445,13 +498,28 @@
 
             document.addEventListener('DOMContentLoaded', () => {
 
-                function proceedToCheckout(paymentMethod, addressId) {
+                var amountSpan = document.querySelector('#amount span');
+                var totalAmountText = amountSpan.textContent.trim();
+                var totalAmount = parseFloat(totalAmountText.replace('₹', ''));
+
+
+
+                var discountSpan = document.querySelector('#discount span');
+                if (discountSpan) {
+                    var discountamountText = discountSpan.textContent.trim();
+                    var discountAmount = parseFloat(discountamountText.replace('₹', ''))
+
+                }
+
+
+
+                function proceedToCheckout(paymentMethod, addressId, paymentStatus) {
                     fetch('/orderproduct', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({ paymentMethod, addressId })
+                        body: JSON.stringify({ paymentMethod, addressId, totalAmount, discountAmount,paymentStatus })
                     })
                         .then(response => response.json())
                         .then(data => {
@@ -472,59 +540,253 @@
                                 })
                             }
                         })
-                
-                .catch(error => {
-                    console.error('Fetch error:', error);
-                    // Handle fetch error
-                });
+
+                        .catch(error => {
+                            console.error('Fetch error:', error);
+                            // Handle fetch error
+                        });
                 }
 
-            //document.addEventListener('DOMContentLoaded', () => {
-            // Payment method
-            const paymentRadios = document.querySelectorAll('input[name="paymentMethod"]');
-            let paymentMethod = null;
 
-            paymentRadios.forEach((radio) => {
-                radio.addEventListener('click', (event) => {
-                    paymentMethod = event.target.value;
-                    console.log('Selected Payment Method:', paymentMethod);
+                function walletpayment(paymentMethod, addressId) {
+                    fetch('/walletOrder', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ paymentMethod, addressId, totalAmount, discountAmount })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+
+                                window.location.href = '/order'
+
+                            } else {
+
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'Products is out of Stock, please remove product',
+                                    showConfirmButton: false, // Disable the confirm button
+                                    timer: 2000, // Display the alert for 3 seconds
+                                    timerProgressBar: true
+
+                                })
+
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'Insufficient Balance',
+                                    showConfirmButton: false, // Disable the confirm button
+                                    timer: 2000, // Display the alert for 3 seconds
+                                    timerProgressBar: true
+
+                                })
+                            }
+                        })
+
+                        .catch(error => {
+                            console.error('Fetch error:', error);
+                            // Handle fetch error
+                        });
+                }
+
+                function razorPay(paymentMethod, addressId, totalAmount) {
+
+                    let totalAmountInPaise = totalAmount * 100;
+
+
+                    fetch('/razor', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ totalAmountInPaise })
+                    })
+                        .then(res => res.json())
+                        .then(data => {
+                            console.log('Data from server:', data);
+                            if (data.succes) {
+                                console.log('resopnse reached');
+                                let options = {
+                                    "key": `${data.key_id}`,
+                                    "amount": `${data.amount}`,
+                                    "currency": "INR",
+                                    "name": "Zakio",
+                                    "order_id": `${data.orderid}`,
+                                    "handler": function (response) {
+
+                                        proceedToCheckout(paymentMethod, addressId,'Success');
+                                    },
+                                    "profile": {
+                                        "name": `${data.name}`,
+                                        "email": `${data.email}`
+                                    }
+                                }
+
+                                let razorpayObject = new Razorpay(options);
+                                razorpayObject.on('payment.failed', (response) => {
+
+                                    proceedToCheckout(paymentMethod, addressId,'Pending');
+                                 
+                                })
+                                razorpayObject.open();
+
+                            }
+                        })
+                }
+
+                //document.addEventListener('DOMContentLoaded', () => {
+                // Payment method
+                const paymentRadios = document.querySelectorAll('input[name="paymentMethod"]');
+                let paymentMethod = null;
+
+                paymentRadios.forEach((radio) => {
+                    radio.addEventListener('click', (event) => {
+                        paymentMethod = event.target.value;
+                        
+                    });
                 });
-            });
 
-            // Address selection
-            const checkboxes = document.querySelectorAll('.select-address');
-            let addressId = null;
 
-            checkboxes.forEach((checkbox) => {
-                checkbox.addEventListener('change', (event) => {
-                    if (event.target.checked) {
-                        addressId = event.target.value;
-                        console.log('Selected Address ID:', addressId);
+
+
+                // Address selection
+                const checkboxes = document.querySelectorAll('.select-address');
+                let addressId = null;
+
+                checkboxes.forEach((checkbox) => {
+                    checkbox.addEventListener('change', (event) => {
+                        if (event.target.checked) {
+                            addressId = event.target.value;
+                            
+                        }
+                    });
+                });
+
+             
+
+
+
+
+
+                const orderButton = document.querySelector('.btn_3');
+                orderButton.addEventListener('click', () => {
+                    if (paymentMethod  && addressId) {
+
+                            if (paymentMethod == 'razorPay') {
+
+                                razorPay(paymentMethod, addressId, totalAmount)
+
+                            }
+                            else if (paymentMethod == 'wallets') {
+
+                                walletpayment(paymentMethod, addressId)
+
+                            } else {
+
+                                if(totalAmount > 2000){
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        text: 'above 2000 totalAmount then online payment should be done',
+                                        showConfirmButton: false, 
+                                        timer: 1500, 
+                                        timerProgressBar: true
+                                    })
+
+                                }else{
+                                    proceedToCheckout(paymentMethod, addressId);
+                                }
+                                
+                            }
+
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Please select both Payment Method and Address before proceeding.',
+                            showConfirmButton: false, 
+                            timer: 2000, 
+                            timerProgressBar: true
+                        })
                     }
                 });
             });
-
-            // Proceed to Paypal button click handler
-            const orderButton = document.querySelector('.btn_3');
-            orderButton.addEventListener('click', () => {
-                if (paymentMethod && addressId) {
-                    console.log('Proceeding to Paypal with:');
-                    console.log('Selected Payment Method:', paymentMethod);
-                    console.log('Selected Address ID:', addressId);
-
-                    // Call the proceedToCheckout function with paymentMethod and addressId
-                    proceedToCheckout(paymentMethod, addressId);
-                } else {
-                    console.log('Please select both Payment Method and Address');
-                }
-            });
-                });
 
 
             //});
 
 
 
+        </script>
+        <script>
+
+            document.addEventListener('DOMContentLoaded', function () {
+                const toggleLink = document.getElementById('couponToggle');
+                const couponDetails = document.getElementById('couponDetails');
+
+                toggleLink.addEventListener('click', function (e) {
+                    e.preventDefault(); // Prevent the default link behavior
+                    couponDetails.style.display = (couponDetails.style.display === 'none') ? 'block' : 'none';
+                });
+            });
+
+            function applyCoupen() {
+
+                const coupencode = document.getElementById('code').value.trim();
+                var amountSpan = document.querySelector('#amount span');
+                var totalAmountText = amountSpan.textContent.trim();
+                var totalAmount = parseFloat(totalAmountText.replace('₹', ''));
+
+                fetch('/checkCoupen', {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ coupencode, totalAmount })
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            window.location.reload();
+                        } else {
+
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: `Minimum Your Purchase Amount`,
+                                showConfirmButton: false, // Disable the confirm button
+                                timer: 2000, // Display the alert for 3 seconds
+                                timerProgressBar: true
+
+                            })
+                        }
+                    })
+
+
+            }
+
+
+
+            function RemoveCoupen() {
+
+                fetch('/removeCoupen', {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify()
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.succes) {
+                            window.location.reload()
+                        }
+                    })
+
+            }
         </script>
 
 

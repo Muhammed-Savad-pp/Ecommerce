@@ -1,0 +1,324 @@
+<%- include("../adminLayouts/header.ejs") %>
+
+    <%- include("../adminLayouts/sidenavbar.ejs") %>
+        <main class="main-wrap">
+            <header class="main-header navbar">
+                <div class="col-search">
+                    <form class="searchform">
+                        <div class="input-group">
+                            <input list="search_terms" type="text" class="form-control" placeholder="Search term" />
+                            <button class="btn btn-light bg" type="button"><i
+                                    class="material-icons md-search"></i></button>
+                        </div>
+                        <datalist id="search_terms">
+                            <option value="Products"></option>
+                            <option value="New orders"></option>
+                            <option value="Apple iphone"></option>
+                            <option value="Ahmed Hassan"></option>
+                        </datalist>
+                    </form>
+                </div>
+                <div class="col-nav">
+                    <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"><i
+                            class="material-icons md-apps"></i></button>
+                    <ul class="nav">
+                        <li class="nav-item">
+                            <a class="nav-link btn-icon" href="#">
+                                <i class="material-icons md-notifications animation-shake"></i>
+                                <span class="badge rounded-pill">3</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link btn-icon darkmode" href="#"> <i
+                                    class="material-icons md-nights_stay"></i> </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#" class="requestfullscreen nav-link btn-icon"><i
+                                    class="material-icons md-cast"></i></a>
+                        </li>
+                        <li class="dropdown nav-item">
+                            <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownLanguage"
+                                aria-expanded="false"><i class="material-icons md-public"></i></a>
+                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownLanguage">
+                                <a class="dropdown-item text-brand" href="#"><img src="assets/imgs/theme/flag-us.png"
+                                        alt="English" />English</a>
+                                <a class="dropdown-item" href="#"><img src="assets/imgs/theme/flag-fr.png"
+                                        alt="Français" />Français</a>
+                                <a class="dropdown-item" href="#"><img src="assets/imgs/theme/flag-jp.png"
+                                        alt="Français" />日本語</a>
+                                <a class="dropdown-item" href="#"><img src="assets/imgs/theme/flag-cn.png"
+                                        alt="Français" />中国人</a>
+                            </div>
+                        </li>
+                        <li class="dropdown nav-item">
+                            <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount"
+                                aria-expanded="false"> <img class="img-xs rounded-circle"
+                                    src="assets/imgs/people/avatar-2.png" alt="User" /></a>
+                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount">
+                                <a class="dropdown-item" href="#"><i class="material-icons md-perm_identity"></i>Edit
+                                    Profile</a>
+                                <a class="dropdown-item" href="#"><i class="material-icons md-settings"></i>Account
+                                    Settings</a>
+                                <a class="dropdown-item" href="#"><i
+                                        class="material-icons md-account_balance_wallet"></i>Wallet</a>
+                                <a class="dropdown-item" href="#"><i class="material-icons md-receipt"></i>Billing</a>
+                                <a class="dropdown-item" href="#"><i class="material-icons md-help_outline"></i>Help
+                                    center</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item text-danger" href="#"><i
+                                        class="material-icons md-exit_to_app"></i>Logout</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </header>
+            <section class="content-main">
+                <div class="content-header">
+                    <div>
+                        <h2 class="content-title card-title">Sales List</h2>
+
+                    </div>
+
+                </div>
+                <header class="card-header">
+                    <div class="row align-items-center">
+
+                        <!-- Report Type Section -->
+                        <div class="col-md-4 col-6 d-flex justify-content-between align-items-center">
+                            <h4 style="margin-bottom: 0; margin-right: 15px;"> Type</h4>
+                            <select id="select" class="form-select" style="margin-right: 15px;">
+                                <option>All</option>
+                                <option>Today</option>
+                                <option>Last Week</option>
+                                <option>Last Month</option>
+                                <option>This Year</option>
+
+                            </select>
+                            <button class="btn btn-success p-2" style="color: white;" onclick="change()">Change</button>
+                        </div>
+                        <div class="col-md-6 col-4 d-flex  align-items-center">
+                            <h4>Custom Date Range</h4>
+                            <p style="margin-left: 30px;">Start </p>
+                            <input id="customDateInput" style="margin-left: 10px;" type="date">
+
+                            <p style="margin-left: 30px;">End </p>
+                            <input type="date" style="margin-left: 10px;">
+                        </div>
+                    </div>
+                </header>
+
+
+
+
+
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr style="background-color: #306450; color: white;">
+                                <th>Order ID</th>
+                                
+                                <th>Pay Method</th>
+                                <th>Date</th>
+                                <th>Product</th>
+                                <th>Price</th>
+                                <th>Qty</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if(sales.length> 0) { %>
+                                <% sales.forEach((val, ind)=> { %>
+                                    <% val.items.forEach((item, i)=> { %>
+                                        <tr>
+                                            <td style="font-weight: 500;">
+                                                <%= val.orderId %>
+                                            </td>
+                                           
+                                            <td style="font-weight: 500;">
+                                                <%= val.paymentMethod %>
+                                            </td>
+                                            <td style="font-weight: 500;">
+                                                <%= val.currendDate.toLocaleDateString('en-US', { day: 'numeric' ,
+                                                    month: 'short' , year: 'numeric' }) %>
+                                            </td>
+                                            <td style="font-weight: 500;">
+                                                <%= item.productId.pname %>
+                                            </td>
+                                            <td style="font-weight: 500;">
+                                                <%= item.productId.price %>
+                                            </td>
+                                            <td style="font-weight: 500;">
+                                                <%= item.quantity %>
+                                            </td>
+                                            <td style="font-weight: 500;">
+                                                <%= item.productId.price * item.quantity %>
+                                            </td>
+                                        </tr>
+
+                                        <% }) %>
+                                            <% }) %>
+
+                                                <tr>
+                                                    <td colspan="7"
+                                                        style="text-align: right; font-weight: bold; font-size: 16px;">
+                                                        Subtotal:</td>
+                                                    <td style="font-weight: bold; font-size: 16px;">
+                                                        <%= subtotal %>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="7"
+                                                        style="text-align: right; font-weight: bold; font-size: 16px;">
+                                                        Discount:</td>
+                                                    <td style="font-weight: bold; font-size: 16px;">
+                                                        <%= discount %>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="7"
+                                                        style="text-align: right; font-weight: bold; font-size: 16px;">
+                                                        Total:</td>
+                                                    <td style="font-weight: bold; font-size: 16px; ">
+                                                        <%= subtotal - discount %>
+                                                    </td>
+                                                </tr>
+
+
+                                                <% } else { %>
+                                                    <!-- Display a message row below table headers -->
+                                                    <tr>
+                                                        <td colspan="8" style="text-align: center; font-weight: 500;">No
+                                                            Orders</td>
+                                                    </tr>
+                                                    <% } %>
+                        </tbody>
+                    </table>
+
+                    <div style="margin-left: 800px;">
+                        <button id="dwnld-exel-btn" class="btn " style="background-color: #535b58;">Exel</button>
+                        <button id="dwnld-pdf-btn" class="btn "
+                            style="background-color: #535b58; margin-left: 5px;">Pdf</button>
+
+                    </div>
+                </div>
+
+
+
+
+
+
+                <div class="pagination-area mt-30 mb-50">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination justify-content-start">
+                            <li class="page-item active"><a class="page-link" href="#">01</a></li>
+                            <li class="page-item"><a class="page-link" href="#">02</a></li>
+                            <li class="page-item"><a class="page-link" href="#">03</a></li>
+                            <li class="page-item"><a class="page-link dot" href="#">...</a></li>
+                            <li class="page-item"><a class="page-link" href="#">16</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </section>
+            <!-- content-main end// -->
+            <footer class="main-footer font-xs">
+                <div class="row pb-30 pt-15">
+                    <div class="col-sm-6">
+                        <script>
+                            document.write(new Date().getFullYear());
+                        </script>
+                        &copy; Nest - HTML Ecommerce Template .
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="text-sm-end">All rights reserved</div>
+                    </div>
+                </div>
+            </footer>
+        </main>
+        <script src="assets/js/vendors/jquery-3.6.0.min.js"></script>
+        <script src="assets/js/vendors/bootstrap.bundle.min.js"></script>
+        <script src="assets/js/vendors/select2.min.js"></script>
+        <script src="assets/js/vendors/perfect-scrollbar.js"></script>
+        <script src="assets/js/vendors/jquery.fullscreen.min.js"></script>
+        <!-- Main Script -->
+        <script src="assets/js/main.js" type="text/javascript"></script>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.3/xlsx.full.min.js"></script>
+
+        <script>
+
+            function change() {
+
+                const value = document.getElementById('select').value.trim();
+                if (value) {
+                    window.location.href = `/admin/salesreport?type=${value}`
+                }
+
+            }
+
+
+            const customDateInput = document.getElementById('customDateInput');
+
+            customDateInput.addEventListener('change', function (event) {
+                const selectedDate = event.target.value;
+
+                if (selectedDate) {
+                    window.location.href = `/admin/salesreport?date=${selectedDate}`
+                }
+            })
+        </script>
+
+        <script>
+
+            document.getElementById("dwnld-pdf-btn").addEventListener("click", function () {
+                let doc = new window.jspdf.jsPDF();
+                let pageCenter = doc.internal.pageSize.getWidth() / 2;
+                const reportType = document.getElementById('select').value;
+                // console.log(reportType)
+                doc.setFontSize(25);
+                doc.text("Zakio.", pageCenter, 10, { align: 'center' });
+                doc.setFontSize(15);
+                // doc.text(`${ reportType }'s Sales Report`, pageCenter, 20, { align: 'center' });
+
+                let table = document.querySelector(".table");
+
+                doc.autoTable({ html: table, startY: 35 });
+
+                doc.save(`sales_report_${reportType}.pdf`);
+            });
+
+            document.getElementById("dwnld-exel-btn").addEventListener("click", function () {
+                let workbook = XLSX.utils.book_new();
+
+                let table = document.querySelector(".table");
+
+                let worksheet = XLSX.utils.table_to_sheet(table);
+
+                XLSX.utils.book_append_sheet(workbook, worksheet, "Sales Report");
+
+                let range = XLSX.utils.decode_range(worksheet['!ref']);
+                for (let C = range.s.c; C <= range.e.c; ++C) {
+                    let max_width = 0;
+                    for (let R = range.s.r; R <= range.e.r; ++R) {
+                        let cell_address = { c: C, r: R };
+                        let cell_ref = XLSX.utils.encode_cell(cell_address);
+                        if (!worksheet[cell_ref]) continue;
+                        let cell_width = XLSX.SSF.format(cell_address, worksheet[cell_ref].v).length;
+                        max_width = Math.max(max_width, cell_width);
+                    }
+                    worksheet['!cols'] = worksheet['!cols'] || [];
+                    worksheet['!cols'][C] = { wch: max_width + 1 };
+                }
+
+                XLSX.writeFile(workbook, "sales_report.xlsx", { bookSST: true, type: 'binary' });
+            });
+        </script>
+
+
+
+
+        <%- include("../adminLayouts/footer.ejs") %>

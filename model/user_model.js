@@ -16,7 +16,7 @@ const userSchema = new mongoose.Schema({
     },
     mobile:{
         type:String,
-        required:true
+        
     },
     is_admin:{
         type:Boolean,
@@ -25,9 +25,13 @@ const userSchema = new mongoose.Schema({
     is_blocked:{
         type:Boolean,
         default:true
+    },
+    referlCode:{
+        type:String,
+    },
+    refered:{
+        type:String,
     }
-
-
 
 }) 
 

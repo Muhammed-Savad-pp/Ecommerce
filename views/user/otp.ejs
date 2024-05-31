@@ -7,31 +7,29 @@
           <div class="card bg-white mb-5 mt-5 border-0" style="box-shadow: 0 12px 15px rgba(0, 0, 0, 0.02);">
             <div class="card-body p-5 text-center">
 
-              <% 
-                if(typeof message !== 'undefined'){
-              %>
-                <p style="color:red"><%=message %></p>
-              <%          
-                }
-               %>
-              <h4>Verify</h4>
-              <p>Your code was sent to you via email</p>
-              <form action="/verify_otp" method="post">
-                <div class="otp-field mb-4">
-                  <input type="number" name="otp" />
-                  <input type="hidden" name="email" value="<%= email
+              <% if(typeof message !=='undefined' ){ %>
+                <p style="color:red">
+                  <%=message %>
+                </p>
+                <% } %>
+                  <h4>Verify</h4>
+                  <p>Your code was sent to you via email</p>
+
+                  <div class="otp-field mb-4">
+                    <input type="number" name="otp" id="otp" />
+                    <input type="hidden" name="email" id="email" value="<%= email
                 %>">
 
-                </div>
+                  </div>
 
-                <button class="btn btn-primary mb-3 ">
-                  Verify
-                </button>
-              </form>
-              <div id="timer" style="color: red;">3:00</div>
-              <p class="resend text-muted mb-0" style="display: none;">
-                Resent OTP <a href="" id="requestAgain">Request again</a>
-              </p>
+                  <button class=" btn-primary mb-3 " onclick="submit()">
+                    Verify
+                  </button>
+
+                  <div id="timer" style="color: red;">1:00</div>
+                  <p class="resend text-muted mb-0" style="display: none;">
+                    Resent OTP <a href="javascript:void(0);" id="requestAgain" onclick="resendOtp()">Request again</a>
+                  </p>
 
             </div>
           </div>
@@ -109,7 +107,7 @@
       }
 
       document.addEventListener('DOMContentLoaded', function () {
-        var threeMinutes = 60 * 3,
+        var threeMinutes = 60 * 1,
           display = document.getElementById('timer');
         startTimer(threeMinutes, display);
 
@@ -123,5 +121,67 @@
 
     </script>
 
+    <script>
+
+      function submit() {
+
+        const email = document.getElementById('email').value.trim();
+        const otp = document.getElementById('otp').value.trim()
+
+        fetch('/verify_otp', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ email, otp })
+        })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              window.location.href = 'login'
+            } else {
+
+              Swal.fire({
+                icon: 'error',
+                title: 'error',
+                text: 'otp is incorrect',
+                showConfirmButton: false, // Disable the confirm button
+                timer: 1500, // Display the alert for 3 seconds
+                timerProgressBar: true
+
+              })
+            }
+          })
+
+      }
+
+
+    </script>
+
+    <script>
+
+        function resendOtp() {
+          const email = document.getElementById('email').value;
+
+          fetch('/resendOtp', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email: email })
+          })
+            .then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                console.log('OTP resent successfully');
+              } else {
+                console.log('Failed to resend OTP');
+              }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+
+    </script>
 
     <%- include("../layouts/footer.ejs") %>

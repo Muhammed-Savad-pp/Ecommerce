@@ -1,3 +1,48 @@
+<style>
+    .offer-badge {
+        width: 50px;
+        position: absolute;
+        top: 5px;
+        left: 100px;
+        font-size: 20px;
+        padding: 5px;
+        z-index: 999;
+        color: rgb(245, 0, 0);
+        height: 30px;
+        font-weight: 500;
+
+    }
+
+    .left_widgets {
+        padding: 20px;
+        background-color: #f8f9fa;
+        border-radius: 5px;
+        margin-bottom: 20px;
+    }
+
+    .l_w_title h3 {
+        margin-bottom: 15px;
+    }
+
+    .widgets_inner {
+        padding: 10px 0;
+    }
+
+    .range_item {
+        margin-bottom: 10px;
+    }
+
+    .checkbox-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .checkbox-item input {
+        margin-right: 10px;
+    }
+</style>
+
 <%- include("../layouts/header.ejs") %>
 
     <%- include("../layouts/navbar.ejs") %>
@@ -33,7 +78,7 @@
                                         <% if(categoryData.length> 0){ %>
                                             <% for(let i=0; i<categoryData.length; i++){ %>
                                                 <li>
-                                                    <a href="#">
+                                                    <a href="/shop?category=<%= categoryData[i]._id %>">
                                                         <%= categoryData[i].name %>
                                                     </a>
 
@@ -45,74 +90,118 @@
                                 </div>
                             </aside>
 
-                            
 
-                            
 
-                            <!-- <aside class="left_widgets p_filter_widgets price_rangs_aside">
+
+
+                            <aside class="left_widgets p_filter_widgets price_rangs_aside">
                                 <div class="l_w_title">
-                                    <h3>Price Filter</h3>
+                                    <h3>Sort</h3>
                                 </div>
+                                <br>
                                 <div class="widgets_inner">
                                     <div class="range_item">
-                                         <div id="slider-range"></div> 
-                                        <input type="text" class="js-range-slider" value="" />
-                                        <div class="d-flex">
-                                            <div class="price_text">
-                                                <p>Price :</p>
-                                            </div>
-                                            <div class="price_value d-flex justify-content-center">
-                                                <input type="text" class="js-input-from" id="amount" readonly />
-                                                <span>to</span>
-                                                <input type="text" class="js-input-to" id="amount" readonly />
-                                            </div>
+                                        <div id="slider-range"></div>
+                                        <div class="checkbox-item">
+                                            <input type="checkbox" id="checkbox1" name="sort" value="HIGH - LOW">
+                                            <label for="checkbox1">HIGH - LOW</label>
                                         </div>
+                                        <div class="checkbox-item">
+                                            <input type="checkbox" id="checkbox2" name="sort" value="LOW - HIGH">
+                                            <label for="checkbox2">LOW - HIGH</label>
+                                        </div>
+                                        <div class="checkbox-item">
+                                            <input type="checkbox" id="checkbox3" name="sort" value="A - Z">
+                                            <label for="checkbox3"> A - Z</label>
+                                        </div>
+                                        <div class="checkbox-item">
+                                            <input type="checkbox" id="checkbox4" name="sort" value="Z - A">
+                                            <label for="checkbox4">Z - A</label>
+                                        </div>
+
                                     </div>
                                 </div>
-                            </aside> -->
+                            </aside>
                         </div>
                     </div>
                     <div class="col-lg-9">
                         <div class="row">
                             <div class="col-lg-12">
                                 <div class="product_top_bar d-flex justify-content-between align-items-center">
-
-                                 
-
                                     <div class="single_product_menu d-flex">
                                         <div class="input-group">
                                             <input type="text" class="form-control" placeholder="search"
-                                                aria-describedby="inputGroupPrepend">
+                                                aria-describedby="inputGroupPrepend" id="search">
                                             <div class="input-group-prepend">
-                                                <span class="input-group-text" id="inputGroupPrepend"><i
-                                                        class="ti-search"></i></span>
+                                                <span onclick="search()" class="input-group-text"
+                                                    id="inputGroupPrepend"><i class="ti-search"></i></span>
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="single_product_menu d-flex">
+                                        <div class="input-group">
+                                            
+                                            <button class="btn " onclick="clearFilter()" style="background-color: #54e4bb; color: white;">Clear Filter</button>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
+
+                           
+                               
+                                  
+
+                               
+                            
                         </div>
 
                         <div class="row align-items-center latest_product_inner">
 
-                            <% if(productsData.length> 0){ %>
-                                <% for(let i=0; i<productsData.length; i++){ %>
+                            <% if(productsData.length> 0) { %>
+                                <% for(let i=0; i < productsData.length; i++) { %>
+                                    <a href="/singleproduct?id=<%= productsData[i]._id %>">
+                                        <div class="col-lg-4 col-sm-6">
+                                            <div class="single_product_item">
+                                                <div style="position: relative;">
+                                                    <img src="<%= productsData[i].image[0] %>" alt="">
 
-                                    <a href="/singleproduct?id=<%= productsData[i]._id %> "><div class="col-lg-4 col-sm-6" >
-                                        <div class="single_product_item">
-                                            <img src="<%= productsData[i].image[0] %>" alt="">
-                                            <div class="single_product_text">
-                                                <h4>
-                                                    <%= productsData[i].pname %>
-                                                </h4>
-                                                <h3>
-                                                    ₹ <%= productsData[i].price %>
-                                                </h3>
-                                                <a href="#" class="add_cart addtocartbutton" data-product-id="<%= productsData[i]._id %>">+ add to cart<i
-                                                        class="fas fa-cart-plus"></i></a>
+                                                    <% if(productsData[i].offerprice !=productsData[i].price){ %>
+                                                        <div class="offer-badge">Offer</div>
+                                                        <% } %>
+
+
+
+                                                            <!-- Apply offer-badge class here -->
+                                                </div>
+                                                <div class="single_product_text">
+                                                    <h4>
+                                                        <%= productsData[i].pname %>
+                                                    </h4>
+                                                    <% if(productsData[i].offerprice==productsData[i].price){ %>
+                                                        <h3>₹ <%= productsData[i].price %>
+                                                        </h3>
+                                                        <% } else{ %>
+                                                            <div class="row">
+                                                                <h3 style=" text-decoration: line-through;">₹ <%=
+                                                                        productsData[i].price %>
+                                                                </h3>
+                                                                <h3 style="margin-left: 30px; color: red;">₹ <%=
+                                                                        productsData[i].offerprice %>
+                                                                </h3>
+                                                            </div>
+
+                                                            <% }%>
+
+                                                                <a href="#" class="add_cart addtocartbutton"
+                                                                    data-product-id="<%= productsData[i]._id %>">
+                                                                    + Add to Cart
+                                                                    <i class="fas fa-cart-plus"></i>
+                                                                </a>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div></a>
+                                    </a>
                                     <% } %>
                                         <% } %>
 
@@ -120,32 +209,40 @@
                                                 <div class="pageination">
                                                     <nav aria-label="Page navigation example">
                                                         <ul class="pagination justify-content-center">
-                                                            <li class="page-item">
-                                                                <a class="page-link" href="#" aria-label="Previous">
-                                                                    <i class="ti-angle-double-left"></i>
-                                                                </a>
-                                                            </li>
-                                                            <li class="page-item"><a class="page-link" href="#">1</a>
-                                                            </li>
-                                                            <li class="page-item"><a class="page-link" href="#">2</a>
-                                                            </li>
-                                                            <li class="page-item"><a class="page-link" href="#">3</a>
-                                                            </li>
-                                                            <li class="page-item"><a class="page-link" href="#">4</a>
-                                                            </li>
-                                                            <li class="page-item"><a class="page-link" href="#">5</a>
-                                                            </li>
-                                                            <li class="page-item"><a class="page-link" href="#">6</a>
-                                                            </li>
-                                                            <li class="page-item">
-                                                                <a class="page-link" href="#" aria-label="Next">
-                                                                    <i class="ti-angle-double-right"></i>
-                                                                </a>
-                                                            </li>
+                                                            <% if (currentPage> 1) { %>
+                                                                <li class="page-item">
+                                                                    <a class="page-link"
+                                                                        href="/shop?page=<%= currentPage - 1 %>"
+                                                                        aria-label="Previous">
+                                                                        <i class="ti-angle-double-left"></i>
+                                                                    </a>
+                                                                </li>
+                                                                <% } %>
+                                                                    <% for (let i=1; i <=totalPages; i++) { %>
+                                                                        <li
+                                                                            class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                                                            <a class="page-link"
+                                                                                href="/shop?page=<%= i %>">
+                                                                                <%= i %>
+                                                                            </a>
+                                                                        </li>
+                                                                        <% } %>
+                                                                            <% if (currentPage < totalPages) { %>
+                                                                                <li class="page-item">
+                                                                                    <a class="page-link"
+                                                                                        href="/shop?page=<%= currentPage + 1 %>"
+                                                                                        aria-label="Next">
+                                                                                        <i
+                                                                                            class="ti-angle-double-right"></i>
+                                                                                    </a>
+                                                                                </li>
+                                                                                <% } %>
                                                         </ul>
                                                     </nav>
                                                 </div>
                                             </div>
+
+
                         </div>
                     </div>
                 </div>
@@ -153,9 +250,7 @@
         </section>
         <!--================End Category Product Area =================-->
 
-        <!-- product_list part start-->
-        
-        <!-- product_list part end-->
+
 
         <!--::footer_part start::-->
         <footer class="footer_part">
@@ -258,61 +353,108 @@
         </footer>
 
         <script>
-            document.addEventListener('DOMContentLoaded',()=>{
+            document.addEventListener('DOMContentLoaded', () => {
                 const addToCartButtons = document.querySelectorAll('.addtocartbutton');
 
-                addToCartButtons.forEach(button =>{
-                    button.addEventListener('click',async(event)=>{
+                addToCartButtons.forEach(button => {
+                    button.addEventListener('click', async (event) => {
                         event.preventDefault();
 
                         const productId = button.getAttribute('data-product-id');
 
 
                         try {
-                            const response = await fetch('/addcart',{
-                                method:'POST',
-                                headers:{
-                                    'Content-Type':'application/json'
+                            const response = await fetch('/addcart', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json'
                                 },
-                                body:JSON.stringify({productId})
+                                body: JSON.stringify({ productId })
                             })
-                            
-                            
 
-                            if(!response.ok){
+
+
+                            if (!response.ok) {
                                 throw new Error('Network response was not ok.');
                             }
-                            
-                            const data =await response.json();
 
-                            if(data.success){
+                            const data = await response.json();
+
+                            if (data.success) {
                                 Swal.fire({
-                                    icon:'success',
-                                    title:'Success!',
+                                    icon: 'success',
+                                    title: 'Success!',
                                     text: 'product added to cart successfully!'
                                 })
-                            }else{
-                                
+                            } else {
+
                                 Swal.fire({
-                                    icon:'error',
-                                    title:'Failed to add Product1',
-                                    text:`error: ${data.message}`
+                                    icon: 'error',
+                                    title: 'Failed to add Product1',
+                                    text: `error: ${data.message}`
                                 });
                             }
 
                         } catch (error) {
-                            console.log('Error adding to cart',error);
+                            console.log('Error adding to cart', error);
                             Swal.fire({
-                                icon:'error',
-                                title:'Product Already Add To Cart',
-                                
+                                icon: 'error',
+                                title: 'Product Already Add To Cart',
+
                             })
                         }
                     })
                 })
             })
         </script>
-    
+
+        <script>
+
+            function search() {
+
+                const input = document.getElementById('search').value.trim()
+
+                if (input) {
+                    window.location.href = `/shop?input=${input}`
+                }
+            }
+
+        </script>
+
+        <script>
+
+            document.addEventListener('DOMContentLoaded', () => {
+                const checkboxes = document.querySelectorAll('input[type="checkbox"][name="sort"]');
+
+                checkboxes.forEach(checkbox => {
+                    checkbox.addEventListener('change', (event) => {
+                        if (event.target.checked) {
+                            window.location.href = `/shop?sortvalue=${event.target.value}`
+                        } else {
+                            console.log(`Deselected value: ${event.target.value}`);
+
+                        }
+
+
+                        checkboxes.forEach(box => {
+                            if (box !== event.target) {
+                                box.checked = false;
+                            }
+                        });
+                    });
+                });
+            });
+        </script>
+
+        <script>
+
+            function clearFilter(){
+                window.location.href = '/shop?clearfilter=clearfilter'
+            }
+
+
+        </script>
+
         <!--::footer_part end::-->
 
         <!-- jquery plugins here-->

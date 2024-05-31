@@ -1,0 +1,97 @@
+<%- include("../layouts/header.ejs") %>
+
+    <style>
+        body {
+
+            background-color: #ecfdff;
+            ;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+        }
+
+
+
+
+
+        .container-div {
+            width: 300px;
+            padding: 20px;
+            /* Example border */
+            border-radius: 15px;
+            /* Adjust this value for more or less curve */
+            margin-top: 200px;
+            /* Center horizontally */
+            text-align: center;
+            /* Center text inside the container */
+            background-color: white;
+        }
+
+        .container-div h5 {
+            margin-top: 20px;
+            margin-left: 0;
+            /* Center align */
+        }
+
+        .container-div form {
+            margin-top: 40px;
+        }
+
+        
+    </style>
+
+
+    <body>
+        <div class="container-div">
+            <h5 style="margin-bottom: 20px;">Enter Email</h5>
+            
+                <div>
+                    <input type="email" placeholder="Enter your email" name="email" id="email">
+                </div>
+                <button class= " btn btn-success" type="button" style="margin-top: 20px;" onclick="submit()">Submit</button>
+           
+        </div>
+
+
+    </body>
+
+
+
+
+<script>
+
+
+    function submit(){
+
+        const email = document.getElementById('email').value.trim();
+
+        fetch('/checkMail',{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email })
+        })
+        .then(res => res.json())
+        .then(data =>{
+            if(data.success){
+
+                window.location.href = `/forgotPasswordOtp?email=${email}`
+                
+            }else{
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: 'Email Not registering'
+                })
+            }
+        })
+
+    }
+
+</script>
+
+
+    <%- include("../layouts/footer.ejs") %>

@@ -34,7 +34,15 @@ const productScema = new mongoose.Schema({
     },
     createdAt:{
         type:Date,
-        dafault:Date.now
+        dafault:Date.now()
+    },
+    offerprice:{
+        type:Number,
+        default:null
+    },
+    count:{
+        type:Number,
+        default:0
     }
 })
 

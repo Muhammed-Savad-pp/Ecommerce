@@ -137,14 +137,12 @@
                                     <br>
                                     <a href="/userprofile"><button class="buttons"><i style="margin-right: 7px;"
                                                 class="fa-solid fa-user"></i>Account Details</button></a>
-                                    <button class="buttons" style="background-color: rgb(94, 120, 206);"><i
-                                            style="margin-right: 7px;" class="fas fa-cart-plus"></i>Orders</button>
+                                    <a href="/orderDetails"><button class="buttons" style="background-color: rgb(94, 120, 206);"><i
+                                            style="margin-right: 7px;" class="fas fa-cart-plus"></i>Orders</button></a>
                                     <a href="/userAddress"><button class="buttons"><i style="margin-right: 7px;"
                                                 class="fa-solid fa-address-book"></i>Address</button></a>
-                                    <button class="buttons"><i style="margin-right: 7px;"
-                                            class="fa-solid fa-wallet"></i>Wallet</button>
-                                    <button class="buttons"><i style="margin-right: 7px;"
-                                            class="fa-solid fa-ticket"></i>Coupons</button>
+                                    <a href="/wallet"><button class="buttons"><i style="margin-right: 7px;"
+                                            class="fa-solid fa-wallet"></i>Wallet</button></a>
                                     <a href="/userlogout"><button class="buttons"><i style="margin-right: 7px;"
                                                 class="fa-solid fa-right-from-bracket"></i>Logout</button></a>
                                 </div>
@@ -162,7 +160,7 @@
                             <% if(orderDatas.length> 0){ %>
 
 
-                                <% orderDatas.forEach(i=> { %>
+                                <% orderDatas.reverse().forEach(i=> { %>
 
 
                                     <div class="col-md-12"
@@ -200,13 +198,13 @@
                                                         </p>
                                                     </div>
 
-                                                    <div style="margin-left: 90px;">
+                                                    <div style="margin-left: 60px;">
                                                         <p>QTY</p>
                                                         <p style="font-size: 16px; font-weight: 500;">
                                                             <%= product.quantity %>
                                                         </p>
                                                     </div>
-                                                    <div style="margin-left: 70px;">
+                                                    <div style="margin-left: 60px;">
 
                                                         <p>Status</p>
                                                         <p
@@ -214,7 +212,21 @@
                                                             <%= product.Status %>
                                                         </p>
                                                     </div>
-                                                   
+                                                    <% if(i.paymentStatus=='Pending' && i.paymentMethod=='razorPay') { %>
+
+                                                        <div style="margin-left: 70px;">
+
+                                                            <p>Payment Status</p>
+                                                            <p
+                                                                style="font-size: 16px; font-weight: 500; color: rgb(9, 117, 9);">
+                                                                <%= i.paymentStatus %>
+                                                            </p>
+                                                            <button
+                                                                style="border: none; color: white; background-color: red; border-radius: 4px;"
+                                                                onclick="razorPay('<%= i.orderId %>','<%= i.userId %>','<%= i.totalAmount %>')">Continue
+                                                                Payment</button>
+                                                        </div>
+                                                        <% } %>
 
                                                 </div>
                                                 <hr>
@@ -231,6 +243,9 @@
                 </div>
             </div>
         </div>
+
+        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
 
         <script>
 
@@ -258,12 +273,12 @@
                                 productId: productId
                             })
                         })
-                        .then(response => response.json())
-                        .then(data =>{
-                            if(data.success){
-                                window.location.href = '/orderDetails'
-                            }
-                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    window.location.href = '/orderDetails'
+                                }
+                            })
 
                     }
                 })
@@ -271,5 +286,80 @@
 
 
             }
+        </script>
+
+        <script>
+
+            function SuccesPayment(orderid, userid, paymentStatus){
+
+                fetch('/continuePayment',{
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ orderid, userid, paymentStatus})
+
+                })
+                .then( res => res.json())
+                .then(data => {
+
+                    if(data.success){
+                        window.location.reload();
+                    }
+
+                })
+
+            }
+
+
+
+            function razorPay(orderid, userid,totalAmount) {
+
+                let totalAmountInPaise = totalAmount * 100;
+
+
+                fetch('/razor', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ totalAmountInPaise })
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        console.log('Data from server:', data);
+                        if (data.succes) {
+                            console.log('resopnse reached');
+                            let options = {
+                                "key": `${data.key_id}`,
+                                "amount": `${data.amount}`,
+                                "currency": "INR",
+                                "name": "Zakio",
+                                "order_id": `${data.orderid}`,
+                                "handler": function (response) {
+
+                                    SuccesPayment(orderid, userid, 'Success');
+                                },
+                                "profile": {
+                                    "name": `${data.name}`,
+                                    "email": `${data.email}`
+                                }
+                            }
+
+                            let razorpayObject = new Razorpay(options);
+                            razorpayObject.on('payment.failed', (response) => {
+
+                                //proceedToCheckout(paymentMethod, userid, 'Success');
+
+                            })
+                            razorpayObject.open();
+
+                        }
+                    })
+
+
+
+            }
+
         </script>
         <%- include("../layouts/footer.ejs") %>

@@ -4,25 +4,27 @@ const mailSender = async (email, title, body) =>{
 
     try {
 
-          //Transfer to send email
      let transporter = nodemailer.createTransport({
         // host:process.env.MAIL_HOST,
         service:'gmail',
         auth:{
             user:process.env.MAIL_USER,
             pass:process.env.MAIL_PASS
-        }
+        },
+        debug: true, // Enable debug output
+        logger: true  // Log to console
      })  
-     
+
+        
          // Configure email content 
 
     let info = await transporter.sendMail({
-        from:'www.savad3517.me - Muhammed Savad pp',
+        from:'savad3517@gmail.com',
         to:email,
         subject:title,
         html:body
     })
-
+    console.log('Email sent: ' + info.response);
         
     } catch (error) {
         console.log(error.message)

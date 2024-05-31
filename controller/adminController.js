@@ -4,10 +4,13 @@ const Category = require('../model/category_model')
 const Product = require('../model/product_model')
 const bcrypt = require('bcrypt');
 const sharp = require('sharp');
-const { $regex } = require('sift');
+const { $regex, $gte } = require('sift');
 const Order = require('../model/order_model')
 const Coupen = require('../model/coupen_model')
-
+const CategoryOffer = require('../model/categoryOffer_model')
+const ProductOffer = require('../model/productOffer_model');
+const { findOneAndUpdate } = require('../model/cart_model');
+const Wallet = require('../model/wallet_model')
 
 const securePassword = async (req,res)=>{
 
@@ -27,13 +30,65 @@ const loadDashbord = async(req,res)=>{
 
     try {
 
-        res.render('dashboard')
+
+        const orderData = await Order.find();
+
+        const overolAmount =  orderData.reduce((acc,order)=>{
+                return acc=acc+order.totalAmount
+        },0)
+
+        let prodcutCount =0;
+        for(let i=0;i<orderData.length;i++){
+            const product = orderData[i].items
+            for(let j=0;j< product.length; j++ ){
+                prodcutCount= prodcutCount+product[j].quantity
+            }
+        }
+
+                // top products
+        const topProducts = await Product.find().sort({count:-1}).limit(2);
+
+                // top categories
+        const topCategories = await Category.find().sort({count:-1}).limit(2)
+
+
+        const weekSales = Array(7).fill(0);
+        const monthSales = Array(4).fill(0);
+        const yearSales = Array(12).fill(0);
+
+        orderData.forEach(order => {
+            const date = new Date(order.currendDate);
+            const day = date.getDay(); // 0-6 (Sunday-Saturday)
+            const month = date.getMonth(); // 0-11 (Jan-Dec)
+            const week = Math.floor(date.getDate() / 7); // Week of the month
+            
+            // Calculate total amount per period
+            weekSales[day] += order.totalAmount;
+            monthSales[week] += order.totalAmount;
+            yearSales[month] += order.totalAmount;
+        });
+
+
+       
+
+        const category = await Category.find();
+
+      
+
+
+     
+
+        
+  
+        res.render('dashboard',{overolAmount, orderData, prodcutCount, topProducts, topCategories ,week:weekSales, month:monthSales, year:yearSales,category})
         
     } catch (error) {
         console.log(error.message);
     }
 
 }
+
+
 
 const loginLoad = async(req,res)=>{
 
@@ -376,7 +431,8 @@ const addProduct = async(req,res)=>{
                 price:price,
                 category:categoryId,
                 quantity:stock,
-                image:croppedimages
+                image:croppedimages,
+                offerprice:null
 
 
             });
@@ -448,12 +504,8 @@ const updateproducts = async(req,res)=>{
     try {  
         const productid = req.body.id
         const existprooduct = await Product.findById(productid)
-        console.log(existprooduct);
-
-        
-
         const productimages = existprooduct.image
-        console.log(productimages);
+        
 
         let croppedimages  = [];
 
@@ -481,7 +533,7 @@ const updateproducts = async(req,res)=>{
 
         const images = croppedimages.length > 0 ? croppedimages:productimages
 
-        const productData = await Product.findByIdAndUpdate({_id:productid},{$set:{pname:req.body.name,description:req.body.description,category:req.body.category._id,price:req.body.price,quantity:req.body.stock,image:images}})
+        const productData = await Product.findByIdAndUpdate({_id:productid},{$set:{pname:req.body.name,description:req.body.description,category:req.body.category._id,price:req.body.price,quantity:req.body.stock,image:images,offerprice:null}})
 
         if(productData){
             res.redirect('/admin/productlist')
@@ -566,47 +618,64 @@ const changeStatus = async(req,res)=>{
 }
 
 
-const approveReturnProduct = async(req,res)=>{
-
+const approveReturnProduct = async (req, res) => {
     try {
-        
-      
         const orderid = req.body.orderId;
         const productid = req.body.productId;
 
         const approveData = await Order.findOneAndUpdate(
-            {orderId:orderid,'items.productId':productid},
-            {$set:{approvel:2,'items.$[item].Status':'Return'}},
-            {
-                arrayFilters:[{'item.productId':productid}],
-                new:true
-            }
-        )
-        if(approveData){
-            
-            const reasons = approveData.items.find(item =>item.productId.equals(productid))
-            const reason = reasons.reason;
-            const quantity = reasons.quantity;
+            { orderId: orderid, 'items.productId': productid },
+            { $set: { approvel: 2, 'items.$[item].Status': 'Return' } },
+            { arrayFilters: [{ 'item.productId': productid }], new: true }
+        );
 
-            
-            if(reason != 'Defective or Damaged Product'){
+        if (approveData) {
+            let totalprice = 0;
+
+            // Calculate total price for returned items
+            approveData.items.forEach(item => {
+                if (item.productId.equals(productid)) {
+                    totalprice += item.price * item.quantity;
+                }
+            });
+
+            // Update product quantity if reason is not 'Defective or Damaged Product'
+            const reasons = approveData.items.find(item => item.productId.equals(productid));
+            const { reason, quantity } = reasons;
+
+            if (reason !== 'Defective or Damaged Product') {
                 const product = await Product.findById(productid);
-                
-                product.quantity += quantity
-                await product.save();
-
+                if (product) {
+                    product.quantity += quantity;
+                    await product.save();
+                }
             }
-            res.status(200).json({success:true})
+
+            const userid = approveData.userId;
+
+            // Update wallet balance and push transaction to history
+            const walletData = await Wallet.findOneAndUpdate(
+                { UserId: userid },
+                {
+                    $inc: { balance: totalprice }, // Increment balance by totalprice
+                    $push: {
+                        history: {
+                            amount: totalprice,
+                            transactionType: 'Refund',
+                        }
+                    }
+                },
+                { new: true, upsert: true }
+            );
+
+            res.status(200).json({ success: true });
         }
-
-       
-
     } catch (error) {
         console.log(error.message);
+        res.status(500).json({ success: false, error: error.message });
     }
+};
 
-
-}
 
 const declineReturnProduct = async(req,res)=>{
 
@@ -615,8 +684,8 @@ const declineReturnProduct = async(req,res)=>{
         console.log('asdasd');
         const orderid = req.body.orderId;
         const productid = req.body.productId;
-        console.log('orderid',orderid);
-        console.log('productid',productid);
+        // console.log('orderid',orderid);
+        // console.log('productid',productid);
 
         const declineData = await Order.findOneAndUpdate({orderId:orderid,'items.productId':productid},{$set:{approvel:3}},{new:true})
 
@@ -665,6 +734,7 @@ const addCoupens = async(req,res)=>{
         const description = req.body.description;
         const MinPrice = req.body.MinPrice;
         const discount = req.body.discount;
+        const validity = req.body.validity;
         const ucode = code.toUpperCase();
 
         const exicts = await Coupen.findOne({coupenCode:code})
@@ -675,7 +745,8 @@ const addCoupens = async(req,res)=>{
                 coupenCode:ucode,
                 discription:description,
                 minPrice:MinPrice,
-                discount:discount
+                discount:discount,
+                validity:validity
             })
             await coupenData.save();
             res.json({success:true})
@@ -688,6 +759,574 @@ const addCoupens = async(req,res)=>{
     }
 
 }
+
+const editCoupens = async(req,res)=>{
+
+    try {
+        
+        const coupenid = req.query.id;
+        const coupenData = await Coupen.findById({_id:coupenid});
+       
+        res.render('coupenEdit',{data:coupenData})
+
+    } catch (error) {
+        console.log(error.message);
+    }
+
+}
+
+const editcoupesSubmit = async(req,res)=>{
+
+    try {
+        
+        const coupenId = req.query.id
+        const code = req.body.code;
+        const description = req.body.description;
+        const MinPrice = req.body.MinPrice;
+        const discount = req.body.discount;
+        const validity = req.body.validity;
+        const ucode = code.toUpperCase();
+        const excits = await Coupen.findOne({coupenCode:{ $regex: new RegExp(`^${ucode}$`, 'i')}});
+
+        if(excits){
+            return res.json({success:false})
+        }else{
+
+            await Coupen.findByIdAndUpdate({_id:coupenId},{$set:{
+                coupenCode:ucode,
+                discription:description,
+                minPrice:MinPrice,
+                discount:discount,
+                validity:validity
+            }},{new:true})
+
+            res.json({success:true})
+        }
+
+         
+
+       
+
+    } catch (error) {
+        console.log(error.message);
+    }
+
+}
+
+
+const deletecopen = async(req,res)=>{
+
+    try {
+        
+        const coupenid = req.body.id;
+        const deleteCoupen = await Coupen.findByIdAndDelete(coupenid)
+        if(deleteCoupen){
+            res.json({success:true})
+        }
+    } catch (error) {
+        console.log(error.message);
+    }
+
+}
+
+const diactiveCoupen = async(req,res)=>{
+
+    try {
+        
+        const id = req.body.id;
+        const updateData = await Coupen.findByIdAndUpdate({_id:id},{$set:{is_active:false}})
+        if(updateData){
+            res.json({success:true})
+        }
+    } catch (error) {
+        console.log(error.message);
+    }
+
+}
+
+const activeCoupen = async(req,res)=>{
+
+    try {
+        
+        const id = req.body.id;
+        const upadateData = await Coupen.findByIdAndUpdate({_id:id},{$set:{is_active:true}})
+        if(upadateData){
+            res.json({success:true})
+        }
+
+    } catch (error) {
+        console.log(error.message);
+    }
+
+}
+
+const LoadCategoryOffer = async(req,res)=>{
+
+    try {
+        const categoryOffer = await CategoryOffer.find().populate('categoryId')
+        res.render('catogoryoffer',{categoryOffer})
+
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+const LoadAddCategoryOffer = async(req,res)=>{
+
+    try {
+        
+        const category = await Category.find()
+        res.render('addCategoryOffer',{category})
+
+    } catch (error) {
+        console.log(error.message);
+    }
+
+}
+
+const addCategoryOffer = async(req,res)=>{
+
+
+        try {
+            
+            const categoryname = req.body.category;
+            const discount = req.body.discount;
+            const date = req.body.date
+
+            console.log(categoryname,discount,date);
+
+
+            const exicts = await CategoryOffer.findOne({categoryId:categoryname})
+
+            if(exicts){
+
+                res.json({success:false})
+
+            }else{
+
+                const updateData = new CategoryOffer({
+                    categoryId:categoryname,
+                    offer:discount,
+                    validity:date
+                })
+
+                await updateData.save();
+                res.json({success:true})
+
+            }
+        } catch (error) {
+            console.log(error.message);
+        }
+}
+
+
+const delectCategoryOffer = async(req,res)=>{
+
+    try {
+
+        const id = req.body.id
+        const deleteData = await CategoryOffer.findByIdAndDelete(id);
+        if(deleteData){
+            res.json({success:true})
+        }
+    } catch (error) {
+        console.log(error.message);
+    }
+
+}
+
+const loadEditCategoryOffer = async(req,res)=>{
+
+    try {
+
+        const category = await Category.find()
+        const id = req.query.id
+      
+        const offerData  = await CategoryOffer.findById(id)
+        res.render('editCategoryOffer',{category,offerData})
+    } catch (error) {
+        console.log(error.message);
+    }
+
+
+}
+
+const editCategoryOffer = async(req,res)=>{
+
+    try {
+
+        const categoryid = req.body.category;
+        const discount = req.body.discount;
+        const date = req.body.date
+        const id = req.body.id
+
+        const exits = await CategoryOffer.findOne({categoryId:categoryid});
+
+        if(exits){
+            res.json({success:false})
+        }else{
+            await CategoryOffer.findByIdAndUpdate(id,{$set:{categoryId:categoryid,offer:discount,validity:date}},{new:true})
+            res.json({success:true})
+        }
+        
+    } catch (error) {
+        console.log(error.message);
+    }
+
+
+}
+
+const diactiveCategoryOffer = async(req,res)=>{
+
+    try {
+        
+        const id = req.body.id;
+
+        const updateData = await CategoryOffer.findByIdAndUpdate(id,{$set:{activation:false}},{new:true})
+
+        if(updateData){
+            res.json({success:true})
+        }
+
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+const CategoryOfferActive = async(req,res)=>{
+
+    
+    try {
+        
+        const id = req.body.id;
+
+        const updateData = await CategoryOffer.findByIdAndUpdate(id,{$set:{activation:true}},{new:true})
+
+        if(updateData){
+            res.json({success:true})
+        }
+
+    } catch (error) {
+        console.log(error.message);
+    }
+
+
+}
+
+
+const loadProductOffer = async(req,res)=>{
+
+    try {
+        
+        const offer = await ProductOffer.find().populate('ProductId')
+        res.render('productoffer',{offer})
+
+    } catch (error) {
+        console.log(error.message);
+    }
+
+}
+
+const LoadAddProductOffer = async(req,res)=>{
+
+    try {
+        
+        const prodcut = await Product.find()
+            res.render('addProductOffer',{prodcut})
+
+    } catch (error) {
+        console.log(error.message);
+    }
+
+}
+
+const addProductOffer = async(req,res)=>{
+
+    try {
+        
+        const {productid, discount, date} = req.body;
+        const exicts = await ProductOffer.findOne({ProductId:productid})
+
+        const product = await Product.findById(productid)
+        const price = product.price
+        
+
+            if(exicts){
+
+                res.json({success:false,message:'Product  Already Added Offer'})
+
+            }else if( price <=  90){
+                return res.json({success:false, message:'Product prize minimum 90 '})
+            }
+            else{
+
+                const updateData = new ProductOffer({
+                    ProductId:productid,
+                    offer:discount,
+                    validity:date
+                })
+
+                await updateData.save();
+                res.json({success:true})
+
+            }
+
+
+    } catch (error) {
+        console.log(error.message);
+    }
+
+}
+
+const diactiveProductOffer = async(req,res)=>{
+
+    try {
+        
+        const id = req.body.id
+        const updateData = await ProductOffer.findByIdAndUpdate(id,{$set:{activation:false}})
+        if(updateData){
+            res.json({success:true})
+        }
+    } catch (error) {
+        console.log(error.message);
+    }
+
+}
+
+const activeProductOffer = async(req,res)=>{
+
+    try {
+        
+        const id = req.body.id
+        const updateData = await ProductOffer.findByIdAndUpdate(id,{$set:{activation:true}})
+        if(updateData){
+            res.json({success:true})
+        }
+    } catch (error) {
+        console.log(error.message);
+    }
+
+}
+
+const loadEditProductOffer = async(req,res) =>{
+
+    try {
+        
+        const prodcut = await Product.find()
+        const id = req.query.id;
+        const data = await ProductOffer.findById(id)
+        res.render('editProductOffer',{data,prodcut})
+
+    } catch (error) {
+        console.log(error.message);
+    }
+
+}
+
+const updateProductOffer = async(req,res)=>{
+
+    try {
+
+        const productid = req.body.productid;
+        const discount = req.body.discount;
+        const date = req.body.date
+        const id = req.body.id
+
+        const exits = await ProductOffer.findOne({ProductId:productid});
+
+        const product = await Product.findById(productid)
+        const price = product.price
+
+       if(price <= 90){
+         return res.json({success:false, message:'Product prize minimum 90 '})
+       }else{
+        await ProductOffer.findByIdAndUpdate(id,{$set:{ProductId:productid,offer:discount,validity:date}},{new:true})
+        res.json({success:true})
+       }
+            
+        
+          
+        
+        
+    } catch (error) {
+        console.log(error.message);
+    }
+
+
+}
+
+const delectProductOffer = async(req,res)=>{
+
+    try {
+        
+        const id = req.body.id
+        const deleteData = await ProductOffer.findByIdAndDelete(id);
+        if(deleteData){
+            res.json({success:true})
+        }
+
+    } catch (error) {
+        console.log(error.message);
+    }
+
+
+}
+
+const LoadSalesReport = async (req, res) => {
+
+    try {
+
+        const { type, date } = req.query;
+       
+
+        let sales;
+        let subtotal=0;
+        let discount =0;
+
+        if (type === 'Today') {
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            sales = await Order.find({
+                currendDate: {
+                    $gte: today,
+                    $lt: new Date(today.getTime() + 24 * 60 * 60 * 1000)
+                }
+            }).populate('address').populate('items.productId');
+
+            sales.forEach(val =>{
+                val.items.forEach(item =>{
+                    subtotal  += item.productId.price * item.quantity;
+                })
+            })
+
+            sales.forEach(val =>{
+                discount += val.discount
+            })
+
+        } else if (type === 'Last Week') {
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const lastWeekStart = new Date(today);
+            lastWeekStart.setDate(today.getDate() - 7);
+
+            const lastWeekEnd = new Date(today);
+            lastWeekEnd.setDate(today.getDate() - 1);
+
+            sales = await Order.find({
+                currendDate: {
+                    $gte: lastWeekStart,
+                    $lte: lastWeekEnd
+                }
+            }).populate('address').populate('items.productId');
+
+            sales.forEach(val =>{
+                val.items.forEach(item =>{
+                    subtotal  += item.productId.price * item.quantity;
+                })
+            })
+
+            sales.forEach(val =>{
+                discount += val.discount
+            })
+
+        } else if (type === 'Last Month') {
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const lastMonthStart = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+            const lastMonthEnd = new Date(today.getFullYear(), today.getMonth(), 0);
+
+            sales = await Order.find({
+                currendDate: {
+                    $gte: lastMonthStart,
+                    $lte: lastMonthEnd
+                }
+            }).populate('address').populate('items.productId');
+
+            sales.forEach(val =>{
+                val.items.forEach(item =>{
+                    subtotal  += item.productId.price * item.quantity;
+                })
+            })
+
+            sales.forEach(val =>{
+                discount += val.discount
+            })
+
+        } else if (type === 'This Year') {
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            const thisYearStart = new Date(today.getFullYear(), 0, 1);
+            const thisYearEnd = new Date(today.getFullYear() + 1, 0, 0);
+
+            sales = await Order.find({
+                currendDate: {
+                    $gte: thisYearStart,
+                    $lt: thisYearEnd
+                }
+            }).populate('address').populate('items.productId');
+
+            sales.forEach(val =>{
+                val.items.forEach(item =>{
+                    subtotal  += item.productId.price * item.quantity;
+                })
+            })
+
+            sales.forEach(val =>{
+                discount += val.discount
+            })
+
+        } else if (date) {
+
+            const selectedDate = new Date(date);
+            selectedDate.setHours(0, 0, 0, 0);
+
+            sales = await Order.find({
+                currendDate: {
+                    $gte: selectedDate,
+                    $lt: new Date(selectedDate.getTime() + 24 * 60 * 60 * 1000)
+                }
+            }).populate('address').populate('items.productId');
+
+            sales.forEach(val =>{
+                val.items.forEach(item =>{
+                    subtotal  += item.productId.price * item.quantity;
+                })
+            })
+
+            sales.forEach(val =>{
+                discount += val.discount
+            })
+
+        } else {
+
+            
+            sales = await Order.find().populate('address').populate('items.productId');
+
+            sales.forEach(val =>{
+                val.items.forEach(item =>{
+                    subtotal  += item.productId.price * item.quantity;
+                })
+            })
+
+            sales.forEach(val =>{
+                discount += val.discount
+            })
+        }
+
+        res.render('saleslist', { sales,subtotal ,discount});
+    } catch (error) {
+        console.error('Error in LoadSalesReport:', error);
+        res.status(500).send('Internal Server Error');
+    }
+};
 
 
 module.exports = {
@@ -718,6 +1357,28 @@ module.exports = {
     declineReturnProduct,
     LoadCoupens,
     loadAddCoupen,
-    addCoupens
+    addCoupens,
+    editCoupens,
+    editcoupesSubmit,
+    deletecopen,
+    diactiveCoupen,
+    activeCoupen,
+    LoadCategoryOffer,
+    LoadAddCategoryOffer,
+    addCategoryOffer,
+    delectCategoryOffer,
+    loadEditCategoryOffer,
+    editCategoryOffer,
+    diactiveCategoryOffer,
+    CategoryOfferActive,
+    loadProductOffer,
+    LoadAddProductOffer,
+    addProductOffer,
+    diactiveProductOffer,
+    activeProductOffer,
+    loadEditProductOffer,
+    updateProductOffer,
+    delectProductOffer,
+    LoadSalesReport,
 
 }

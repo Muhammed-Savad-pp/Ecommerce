@@ -16,7 +16,7 @@ const otpschema = new mongoose.Schema({
     createdAt:{
         type:Date,
         default:Date.now,
-        expires:60*3
+        expires:60*1
     }
 })
 
@@ -50,10 +50,14 @@ async function sendverification(email,otp) {
 otpschema.pre('save',async function(next){
 
         
-        if(this.isNew) {
-            await sendverification(this.email, this.otp)
+    if (this.isNew) {
+        try {
+            await sendverification(this.email, this.otp);
+        } catch (error) {
+            next(error);
         }
-        next()
+    }
+    next();
 
 })
 

@@ -33,9 +33,9 @@
               </thead>
               <tbody>
 
-                <% if (cartsdata && cartsdata.product) { %>
+                <% if (Array.isArray(cartsdata) && cartsdata.length > 0) { %>
 
-                  <% cartsdata.product.forEach(val=>{ %>
+                  <% cartsdata.forEach(val=>{ %>
 
                     <tr>
                       <td>
@@ -52,7 +52,12 @@
                       </td>
                       <td>
                         <h5 id="price_<%= val.productId._id %>">
-                          ₹<%= val.productId.price %>
+                          <% if(val.productId.offerprice != val.productId.price ){ %>
+                            ₹<%= val.productId.offerprice %>
+                          <% }else{ %>
+                            ₹<%= val.productId.price %>
+                          <% } %>
+                          
                         </h5>
 
                       </td>
@@ -73,7 +78,12 @@
 
                       <td>
                         <h5 class="subtotal" data-product-id="<%= val.productId._id %>">
-                          ₹ <%= val.quantity * val.productId.price %>.00
+                          <% if(val.productId.offerprice != val.productId.price){ %>
+                            ₹ <%= val.quantity * val.productId.offerprice %>.00
+                          <% } else{ %>
+                            ₹ <%= val.quantity * val.productId.price %>.00
+                          <% } %>
+                          
                         </h5>
                       </td>
 
@@ -315,7 +325,6 @@
             return response.json();
           })
           .then(data => {
-            console.log('Quantity updated successfully:', data);
             if (data.message === "Maximum stock exceeded") {
               Swal.fire({
                 icon: 'warning',

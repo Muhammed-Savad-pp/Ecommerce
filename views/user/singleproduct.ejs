@@ -59,16 +59,21 @@
                                 <%= products.pname %>
                             </h3>
                             <h2>
-                                ₹ <%= products.price %>
+                                <% if(products.offerprice != products.price){ %>
+                                    ₹ <%= products.offerprice %>
+                                <% }else{ %>
+                                    ₹ <%= products.price %>
+                                <% } %>
+                                
                             </h2>
                             <ul class="list">
                                 <li>
-                                    <a class="active" href="#">
+                                    <a class="active" href="#" style="color: black;">
                                         <span>Category</span> : <%= products.category.name %></a>
                                 </li>
                                 <li>
                                     <a href="#"> <span>Availibility</span> : <% if(products.quantity==0){ %>
-                                            Stock Out
+                                           Stock Out
 
                                             <% } else{ %>
                                                 Stock : <%= products.quantity %>
@@ -496,7 +501,7 @@
                             title: 'Error',
                             text: errMsg,
                             showConfirmButton: false,
-                            timer: 15000, 
+                            timer: 1500, 
                             timerProgressBar: true
 
                         })

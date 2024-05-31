@@ -208,8 +208,9 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <% if(wishilistData && wishilistData.items){ %>
-                                        <% wishilistData.items.forEach(item=>{ %>
+                                   
+                                    <% if(Array.isArray(wishilistData) && wishilistData.length > 0){ %>
+                                        <% wishilistData.forEach(item=>{ %>
 
                                             <tr>
                                                 <td width="45%">
@@ -223,7 +224,13 @@
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td width="15%" class="price">₹ <%= item.productId.price %>
+                                                <td width="15%" class="price">
+                                                    <% if(item.productId.price != item.productId.offerprice){ %>
+                                                        ₹ <%= item.productId.offerprice %>
+                                                    <% } else { %>
+                                                        ₹ <%= item.productId.price %>
+                                                    <% } %>
+                                                    
                                                 </td>
                                                 <% if(item.productId.quantity <=0){ %>
                                                     <td width="15%"><span class="in-stock-box">Stock Out</span></td>
