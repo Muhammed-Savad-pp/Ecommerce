@@ -37,7 +37,7 @@ const loadShop = async (req, res) => {
     }
 
     const totalProducts = await product.countDocuments(query);
-    const products = await product
+    let products = await product
       .find(query)
       .populate('category')
       .sort(sortOptions)
@@ -81,15 +81,19 @@ const loadShop = async (req, res) => {
       wishilistData: wishilistData,
       currentPage: page,
       totalPages: Math.ceil(totalProducts / limit),
+      sortValue: sortValue,
+      search: search,
+      categoryid: categoryid
     });
 
-    if(clearfilter){
+    if (clearfilter) {
       res.redirect('/shop')
     }
   } catch (error) {
     console.log(error.message);
   }
 };
+
 
 const singleproduct = async (req, res) => {
   try {

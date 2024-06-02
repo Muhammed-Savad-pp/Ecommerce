@@ -158,92 +158,68 @@
 
                         <div class="row align-items-center latest_product_inner">
 
-                            <% if(productsData.length> 0) { %>
-                                <% for(let i=0; i < productsData.length; i++) { %>
-                                    <a href="/singleproduct?id=<%= productsData[i]._id %>">
-                                        <div class="col-lg-4 col-sm-6">
-                                            <div class="single_product_item">
-                                                <div style="position: relative;">
-                                                    <img src="<%= productsData[i].image[0] %>" alt="">
-
-                                                    <% if(productsData[i].offerprice !=productsData[i].price){ %>
-                                                        <div class="offer-badge">Offer</div>
-                                                        <% } %>
-
-
-
-                                                            <!-- Apply offer-badge class here -->
-                                                </div>
-                                                <div class="single_product_text">
-                                                    <h4>
-                                                        <%= productsData[i].pname %>
-                                                    </h4>
-                                                    <% if(productsData[i].offerprice==productsData[i].price){ %>
-                                                        <h3>₹ <%= productsData[i].price %>
-                                                        </h3>
-                                                        <% } else{ %>
-                                                            <div class="row">
-                                                                <h3 style=" text-decoration: line-through;">₹ <%=
-                                                                        productsData[i].price %>
-                                                                </h3>
-                                                                <h3 style="margin-left: 30px; color: red;">₹ <%=
-                                                                        productsData[i].offerprice %>
-                                                                </h3>
-                                                            </div>
-
-                                                            <% }%>
-
-                                                                <a href="#" class="add_cart addtocartbutton"
-                                                                    data-product-id="<%= productsData[i]._id %>">
-                                                                    + Add to Cart
-                                                                    <i class="fas fa-cart-plus"></i>
-                                                                </a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </a>
-                                    <% } %>
+                            <% if(productsData.length > 0) { %>
+                              <% for(let i = 0; i < productsData.length; i++) { %>
+                                <a href="/singleproduct?id=<%= productsData[i]._id %>">
+                                  <div class="col-lg-4 col-sm-6">
+                                    <div class="">
+                                      <div style="position: relative;">
+                                        <img src="<%= productsData[i].image[0] %>" alt="">
+                          
+                                        <% if(productsData[i].offerprice != productsData[i].price){ %>
+                                          <div class="offer-badge">Offer</div>
                                         <% } %>
-
-                                            <div class="col-lg-12">
-                                                <div class="pageination">
-                                                    <nav aria-label="Page navigation example">
-                                                        <ul class="pagination justify-content-center">
-                                                            <% if (currentPage> 1) { %>
-                                                                <li class="page-item">
-                                                                    <a class="page-link"
-                                                                        href="/shop?page=<%= currentPage - 1 %>"
-                                                                        aria-label="Previous">
-                                                                        <i class="ti-angle-double-left"></i>
-                                                                    </a>
-                                                                </li>
-                                                                <% } %>
-                                                                    <% for (let i=1; i <=totalPages; i++) { %>
-                                                                        <li
-                                                                            class="page-item <%= currentPage === i ? 'active' : '' %>">
-                                                                            <a class="page-link"
-                                                                                href="/shop?page=<%= i %>">
-                                                                                <%= i %>
-                                                                            </a>
-                                                                        </li>
-                                                                        <% } %>
-                                                                            <% if (currentPage < totalPages) { %>
-                                                                                <li class="page-item">
-                                                                                    <a class="page-link"
-                                                                                        href="/shop?page=<%= currentPage + 1 %>"
-                                                                                        aria-label="Next">
-                                                                                        <i
-                                                                                            class="ti-angle-double-right"></i>
-                                                                                    </a>
-                                                                                </li>
-                                                                                <% } %>
-                                                        </ul>
-                                                    </nav>
-                                                </div>
-                                            </div>
-
-
-                        </div>
+                                      </div>
+                                      <div class="single_product_text">
+                                        <h5><%= productsData[i].pname %></h5>
+                                        <% if(productsData[i].offerprice == productsData[i].price){ %>
+                                          <h4>₹ <%= productsData[i].price %></h4>
+                                        <% } else { %>
+                                          <div class="row">
+                                            <h4 style="text-decoration: line-through;margin-left: 20px;">₹ <%= productsData[i].price %></h4>
+                                            <h4 style="margin-left: 30px; color: red;">₹ <%= productsData[i].offerprice %></h4>
+                                          </div>
+                                        <% } %>
+                                        <a style="color: red; margin-left: 50px;" href="#" class="add_cart addtocartbutton" data-product-id="<%= productsData[i]._id %>" >
+                                          + Add to Cart <i class="fas fa-cart-plus"></i>
+                                        </a>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </a>
+                              <% } %>
+                            <% } %>
+                          
+                            <div class="col-lg-12">
+                              <div class="pageination">
+                                <nav aria-label="Page navigation example">
+                                  <ul class="pagination justify-content-center">
+                                    <% if (currentPage > 1) { %>
+                                      <li class="page-item">
+                                        <a class="page-link" href="/shop?page=<%= currentPage - 1 %>&sortvalue=<%= sortValue %>&input=<%= search %>&category=<%= categoryid %>" aria-label="Previous">
+                                          <i class="ti-angle-double-left"></i>
+                                        </a>
+                                      </li>
+                                    <% } %>
+                                    <% for (let i = 1; i <= totalPages; i++) { %>
+                                      <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                                        <a class="page-link" href="/shop?page=<%= i %>&sortvalue=<%= sortValue %>&input=<%= search %>&category=<%= categoryid %>"><%= i %></a>
+                                      </li>
+                                    <% } %>
+                                    <% if (currentPage < totalPages) { %>
+                                      <li class="page-item">
+                                        <a class="page-link" href="/shop?page=<%= currentPage + 1 %>&sortvalue=<%= sortValue %>&input=<%= search %>&category=<%= categoryid %>" aria-label="Next">
+                                          <i class="ti-angle-double-right"></i>
+                                        </a>
+                                      </li>
+                                    <% } %>
+                                  </ul>
+                                </nav>
+                              </div>
+                            </div>
+                          
+                          </div>
+                          
                     </div>
                 </div>
             </div>

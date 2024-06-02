@@ -1176,7 +1176,7 @@ const LoadSalesReport = async (req, res) => {
 
     try {
 
-        const { type, date } = req.query;
+        const { type, date ,startDate, endDate } = req.query;
        
 
         let sales;
@@ -1283,28 +1283,29 @@ const LoadSalesReport = async (req, res) => {
                 discount += val.discount
             })
 
-        } else if (date) {
+        } else if (startDate && endDate) {
 
-            const selectedDate = new Date(date);
-            selectedDate.setHours(0, 0, 0, 0);
+            const start = new Date(startDate);
+            const end = new Date(endDate);
+            end.setHours(23, 59, 59, 999);
 
             sales = await Order.find({
                 currendDate: {
-                    $gte: selectedDate,
-                    $lt: new Date(selectedDate.getTime() + 24 * 60 * 60 * 1000)
+                    $gte: start,
+                    $lte: end
                 }
             }).populate('address').populate('items.productId');
 
-            sales.forEach(val =>{
-                val.items.forEach(item =>{
-                    subtotal  += item.productId.price * item.quantity;
-                })
-            })
+            sales.forEach(val => {
+                val.items.forEach(item => {
+                    subtotal += item.productId.price * item.quantity;
+                });
+            });
 
-            sales.forEach(val =>{
-                discount += val.discount
-            })
-
+            sales.forEach(val => {
+                discount += val.discount;
+            });
+            
         } else {
 
             
