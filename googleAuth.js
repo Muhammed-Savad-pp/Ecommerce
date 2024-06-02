@@ -5,7 +5,7 @@ const User = require('./model/user_model')
 
 const CLIENT_ID = '1040764869704-3cgfjbv73p12d7e866co58sbvt1lo5u8.apps.googleusercontent.com'
 const CLIENT_SECRET = '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'
-const REDIRECT_URI = 'http://localhost:3000/home/auth/google/callback'
+const REDIRECT_URI = 'http://localhost:3000/auth/google/callback'
 
 router.get('/auth/google', (req, res) => {
     const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=profile email`
@@ -14,7 +14,7 @@ router.get('/auth/google', (req, res) => {
 
 
 // Callback URL for handling the Google Login response
-router.get('/home/auth/google/callback', async (req, res) => {
+router.get('/auth/google/callback', async (req, res) => {
     const { code } = req.query;
   
     try {
@@ -58,7 +58,7 @@ router.get('/home/auth/google/callback', async (req, res) => {
       // Code to handle user authentication and retrieval using the profile data
       
   
-      res.redirect('/home');
+      res.redirect('/');
     } catch (error) {
       console.error('Error:', error.message);
       res.redirect('/login');
