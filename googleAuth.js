@@ -5,7 +5,7 @@ const User = require('./model/user_model')
 
 const CLIENT_ID = '1040764869704-3cgfjbv73p12d7e866co58sbvt1lo5u8.apps.googleusercontent.com'
 const CLIENT_SECRET = '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'
-const REDIRECT_URI = 'http://localhost:3000/auth/google/callback'
+const REDIRECT_URI = 'http://zakio.online/auth/google/callback'
 
 router.get('/auth/google', (req, res) => {
     const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=profile email`
