@@ -65,7 +65,7 @@ user_route.get('/newPasswordPage',userController.LoadNewPasswordPage);
 user_route.post('/changePassword',userController.changeUserPassword)
 
         // home
-user_route.get('/home',nocache(),userController.loadHome)
+user_route.get('/',nocache(),userController.loadHome)
 
 
         // shop

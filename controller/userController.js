@@ -269,7 +269,7 @@ const isLogin = async (req,res)=>{
                     if(userData.is_blocked === false){
 
                         req.session.user_id = userData._id;
-                        res.redirect('/home')
+                        res.redirect('/')
                     
                     }else{
                         res.render('login',{message:'Admin blocked you',cartsdata,wishilistData})

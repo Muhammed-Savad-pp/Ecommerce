@@ -336,7 +336,7 @@ const userlogout = async(req,res)=>{
         
         req.session.user_id = null;
         
-        res.redirect('/home')
+        res.redirect('/')
 
     } catch (error) {
         console.log(error.message);
