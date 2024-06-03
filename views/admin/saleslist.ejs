@@ -118,7 +118,6 @@
                         <thead>
                             <tr style="background-color: #306450; color: white;">
                                 <th>Order ID</th>
-
                                 <th>Pay Method</th>
                                 <th>Date</th>
                                 <th>Product</th>
@@ -135,13 +134,11 @@
                                             <td style="font-weight: 500;">
                                                 <%= val.orderId %>
                                             </td>
-
                                             <td style="font-weight: 500;">
                                                 <%= val.paymentMethod %>
                                             </td>
                                             <td style="font-weight: 500;">
-                                                <%= val.currendDate.toLocaleDateString('en-US', { day: 'numeric' ,
-                                                    month: 'short' , year: 'numeric' }) %>
+                                                <%= val.currendDate.toLocaleDateString('en-US', { day: 'numeric' , month: 'short' , year: 'numeric' }) %>
                                             </td>
                                             <td style="font-weight: 500;">
                                                 <%= item.productId.pname %>
@@ -156,53 +153,49 @@
                                                 <%= item.productId.price * item.quantity %>
                                             </td>
                                         </tr>
-
-                                        <% }) %>
-                                            <% }) %>
-
-                                                <tr>
-                                                    <td colspan="7"
-                                                        style="text-align: right; font-weight: bold; font-size: 16px;">
-                                                        Subtotal:</td>
-                                                    <td style="font-weight: bold; font-size: 16px;">
-                                                        <%= subtotal %>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td colspan="7"
-                                                        style="text-align: right; font-weight: bold; font-size: 16px;">
-                                                        Discount:</td>
-                                                    <td style="font-weight: bold; font-size: 16px;">
-                                                        <%= discount %>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td colspan="7"
-                                                        style="text-align: right; font-weight: bold; font-size: 16px;">
-                                                        Total:</td>
-                                                    <td style="font-weight: bold; font-size: 16px; ">
-                                                        <%= subtotal - discount %>
-                                                    </td>
-                                                </tr>
-
-
-                                                <% } else { %>
-                                                    <!-- Display a message row below table headers -->
-                                                    <tr>
-                                                        <td colspan="8" style="text-align: center; font-weight: 500;">No
-                                                            Orders</td>
-                                                    </tr>
-                                                    <% } %>
+                                    <% }) %>
+                                <% }) %>
+                            <% } else { %>
+                                <tr>
+                                    <td colspan="7" style="text-align: center; font-weight: 500;">No Orders</td>
+                                </tr>
+                            <% } %>
                         </tbody>
+                        <% if(sales.length > 0) { %>
+                        <tfoot>
+                            <tr>
+                                <td colspan="6" style="text-align: right; font-weight: bold; font-size: 16px;">
+                                    Subtotal:
+                                </td>
+                                <td style="font-weight: bold; font-size: 16px;">
+                                    <%= subtotal %>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="6" style="text-align: right; font-weight: bold; font-size: 16px;">
+                                    Discount:
+                                </td>
+                                <td style="font-weight: bold; font-size: 16px;">
+                                    <%= discount %>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="6" style="text-align: right; font-weight: bold; font-size: 16px;">
+                                    Total:
+                                </td>
+                                <td style="font-weight: bold; font-size: 16px;">
+                                    <%= subtotal - discount %>
+                                </td>
+                            </tr>
+                        </tfoot>
+                        <% } %>
                     </table>
-
                     <div style="margin-left: 800px;">
                         <button id="dwnld-exel-btn" class="btn " style="background-color: #535b58;">Exel</button>
-                        <button id="dwnld-pdf-btn" class="btn "
-                            style="background-color: #535b58; margin-left: 5px;">Pdf</button>
-
+                        <button id="dwnld-pdf-btn" class="btn " style="background-color: #535b58; margin-left: 5px;">Pdf</button>
                     </div>
                 </div>
+                
 
 
 
@@ -277,52 +270,46 @@
 
         </script>
 
-        <script>
+<script>
+    document.getElementById("dwnld-pdf-btn").addEventListener("click", function () {
+        let doc = new window.jspdf.jsPDF();
+        let pageCenter = doc.internal.pageSize.getWidth() / 2;
+        const reportType = document.getElementById('select').value;
 
-            document.getElementById("dwnld-pdf-btn").addEventListener("click", function () {
-                let doc = new window.jspdf.jsPDF();
-                let pageCenter = doc.internal.pageSize.getWidth() / 2;
-                const reportType = document.getElementById('select').value;
-                // console.log(reportType)
-                doc.setFontSize(25);
-                doc.text("Zakio.", pageCenter, 10, { align: 'center' });
-                doc.setFontSize(15);
-                // doc.text(`${ reportType }'s Sales Report`, pageCenter, 20, { align: 'center' });
+        doc.setFontSize(25);
+        doc.text("Zakio.", pageCenter, 10, { align: 'center' });
+        doc.setFontSize(15);
 
-                let table = document.querySelector(".table");
+        let table = document.querySelector(".table");
+        doc.autoTable({ html: table, startY: 35 });
 
-                doc.autoTable({ html: table, startY: 35 });
+        doc.save(`sales_report_${reportType}.pdf`);
+    });
 
-                doc.save(`sales_report_${reportType}.pdf`);
-            });
+    document.getElementById("dwnld-exel-btn").addEventListener("click", function () {
+        let workbook = XLSX.utils.book_new();
+        let table = document.querySelector(".table");
+        let worksheet = XLSX.utils.table_to_sheet(table);
 
-            document.getElementById("dwnld-exel-btn").addEventListener("click", function () {
-                let workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Sales Report");
 
-                let table = document.querySelector(".table");
+        let range = XLSX.utils.decode_range(worksheet['!ref']);
+        for (let C = range.s.c; C <= range.e.c; ++C) {
+            let max_width = 0;
+            for (let R = range.s.r; R <= range.e.r; ++R) {
+                let cell_address = { c: C, r: R };
+                let cell_ref = XLSX.utils.encode_cell(cell_address);
+                if (!worksheet[cell_ref]) continue;
+                let cell_width = XLSX.SSF.format(cell_address, worksheet[cell_ref].v).length;
+                max_width = Math.max(max_width, cell_width);
+            }
+            worksheet['!cols'] = worksheet['!cols'] || [];
+            worksheet['!cols'][C] = { wch: max_width + 1 };
+        }
 
-                let worksheet = XLSX.utils.table_to_sheet(table);
-
-                XLSX.utils.book_append_sheet(workbook, worksheet, "Sales Report");
-
-                let range = XLSX.utils.decode_range(worksheet['!ref']);
-                for (let C = range.s.c; C <= range.e.c; ++C) {
-                    let max_width = 0;
-                    for (let R = range.s.r; R <= range.e.r; ++R) {
-                        let cell_address = { c: C, r: R };
-                        let cell_ref = XLSX.utils.encode_cell(cell_address);
-                        if (!worksheet[cell_ref]) continue;
-                        let cell_width = XLSX.SSF.format(cell_address, worksheet[cell_ref].v).length;
-                        max_width = Math.max(max_width, cell_width);
-                    }
-                    worksheet['!cols'] = worksheet['!cols'] || [];
-                    worksheet['!cols'][C] = { wch: max_width + 1 };
-                }
-
-                XLSX.writeFile(workbook, "sales_report.xlsx", { bookSST: true, type: 'binary' });
-            });
-        </script>
-
+        XLSX.writeFile(workbook, "sales_report.xlsx", { bookSST: true, type: 'binary' });
+    });
+</script>
 
 
 
