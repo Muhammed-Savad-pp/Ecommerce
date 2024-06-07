@@ -87,7 +87,7 @@ const cancelorder = async(req,res)=>{
             await product.save();
 
             var walletAmount = product.price * canceledQuantity
-            if(cancelData.paymentMethod == 'razorPay'){
+            if(cancelData.paymentMethod == 'razorPay' || cancelData.paymentMethod == 'wallets' ){
 
                 const wallet = await Wallet.findOne({UserId:userid});
 

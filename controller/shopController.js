@@ -6,34 +6,47 @@ const Cart = require('../model/cart_model')
 const Wishilist = require('../model/wishilist_modal');
 const { $options } = require("sift");
 
+
 const loadShop = async (req, res) => {
   try {
     const search = req.query.input;
     const categoryid = req.query.category;
-    const sortValue = req.query.sortvalue;
     const clearfilter = req.query.clearfilter;
+    const sortValue = req.query.sortvalue;
     const page = parseInt(req.query.page) || 1;
     const limit = 6;
     const skip = (page - 1) * limit;
+
+    if (clearfilter) {
+      req.session.clear = 'illa'
+      res.redirect('/shop')
+     
+    }
 
     let query = { is_delete: false };
 
     if (search) {
       query.$or = [{ pname: { $regex: search, $options: 'i' } }];
+       req.session.clear = 'und'
     } else if (categoryid) {
       query.category = categoryid;
+      req.session.clear = 'und'
     }
 
     let sortOptions = {};
 
     if (sortValue == 'HIGH - LOW') {
       sortOptions.price = -1;
+      req.session.clear = 'und'
     } else if (sortValue == 'LOW - HIGH') {
       sortOptions.price = 1;
+      req.session.clear = 'und'
     } else if (sortValue == 'A - Z') {
       sortOptions.pname = 1;
+      req.session.clear = 'und'
     } else if (sortValue == 'Z - A') {
       sortOptions.pname = -1;
+      req.session.clear = 'und'
     }
 
     const totalProducts = await product.countDocuments(query);
@@ -83,12 +96,12 @@ const loadShop = async (req, res) => {
       totalPages: Math.ceil(totalProducts / limit),
       sortValue: sortValue,
       search: search,
-      categoryid: categoryid
+      categoryid: categoryid,
+      req:req
     });
+    
 
-    if (clearfilter) {
-      res.redirect('/shop')
-    }
+    
   } catch (error) {
     console.log(error.message);
   }

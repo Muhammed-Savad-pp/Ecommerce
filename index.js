@@ -57,6 +57,6 @@ app.use('/',facebookAuth)
 
 app.listen(port,()=>{
     console.log('http://localhost:3000/admin/login');
-    console.log('http://localhost:3000/home');
+    console.log('http://localhost:3000/');
 
 })

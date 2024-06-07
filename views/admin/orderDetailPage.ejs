@@ -183,20 +183,11 @@
                                                     <p style=" margin-bottom: 6px;"><%= product.reason %></p>
                                                     
                                                     <button onclick="approve('<%= orderData.orderId %>','<%= product.productId._id %>')" style="margin-left: 14px; border: none; background-color: green; color: white;">approve</button>
-                                                    <button onclick="(decline('<%= orderData.orderId %>','<%= product.productId._id %>'))" style="border: none; background-color: red; color: white;">decline</button>
+                                                    <button onclick="decline('<%= orderData.orderId %>','<%= product.productId._id %>')" style="border: none; background-color: red; color: white;">decline</button>
                                                 </div>
-                                               
-
                                                <% } %>
                                             </td>
-    
-    
                                         </tr>
-    
-    
-    
-    
-    
                                         <% }); %>
     
                                             <% } %>

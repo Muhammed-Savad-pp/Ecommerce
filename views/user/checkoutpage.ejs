@@ -127,6 +127,7 @@
                                         Have a coupon?
                                         <a href="#" id="couponToggle">Click here to enter your code</a>
                                         <div id="couponDetails" style="display: none; background-color: white;">
+                                            ajsdfasfnm
                                             <% if(coupenData){ %>
                                                 <% coupenData.forEach(cou=>{ %>
                                                     <% if(cou.is_active==true){ %>
@@ -138,9 +139,9 @@
                                                                 style="font-size: 18px; color:red; font-weight: 400;">
                                                                 <%= cou.coupenCode %>
                                                             </span> </p>
-                                                        <% } %>
-                                                            <% }) %>
-                                                                <% } %>
+                                                    <% } %>
+                                                <% }) %>
+                                            <% } %>
                                         </div>
                                     </h2>
                                 </div>
@@ -726,6 +727,7 @@
             document.addEventListener('DOMContentLoaded', function () {
                 const toggleLink = document.getElementById('couponToggle');
                 const couponDetails = document.getElementById('couponDetails');
+                console.log('c',couponDetails);
 
                 toggleLink.addEventListener('click', function (e) {
                     e.preventDefault(); // Prevent the default link behavior

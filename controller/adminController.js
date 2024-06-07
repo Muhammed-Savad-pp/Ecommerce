@@ -58,11 +58,10 @@ const loadDashbord = async(req,res)=>{
 
         orderData.forEach(order => {
             const date = new Date(order.currendDate);
-            const day = date.getDay(); // 0-6 (Sunday-Saturday)
-            const month = date.getMonth(); // 0-11 (Jan-Dec)
-            const week = Math.floor(date.getDate() / 7); // Week of the month
+            const day = date.getDay(); 
+            const month = date.getMonth(); 
+            const week = Math.floor(date.getDate() / 7); 
             
-            // Calculate total amount per period
             weekSales[day] += order.totalAmount;
             monthSales[week] += order.totalAmount;
             yearSales[month] += order.totalAmount;

@@ -141,7 +141,12 @@
                                     <div class="single_product_menu d-flex">
                                         <div class="input-group">
                                             
-                                            <button class="btn " onclick="clearFilter()" style="background-color: #54e4bb; color: white;">Clear Filter</button>
+                                            <% if(req.session.clear == 'und'){ %>
+                                                <button class="btn " onclick="clearFilter()" style="background-color: #54e4bb; color: white;  " id="clear" >Clear Filter</button>
+
+                                           <% } %>
+                                           <% console.log(req.session.clear) %>
+                                           
                                         </div>
                                     </div>
 
@@ -383,7 +388,6 @@
                 })
             })
         </script>
-
         <script>
 
             function search() {
@@ -392,6 +396,7 @@
 
                 if (input) {
                     window.location.href = `/shop?input=${input}`
+                   
                 }
             }
 
@@ -406,6 +411,7 @@
                     checkbox.addEventListener('change', (event) => {
                         if (event.target.checked) {
                             window.location.href = `/shop?sortvalue=${event.target.value}`
+                            
                         } else {
                             console.log(`Deselected value: ${event.target.value}`);
 
@@ -426,6 +432,8 @@
 
             function clearFilter(){
                 window.location.href = '/shop?clearfilter=clearfilter'
+                
+                
             }
 
 
