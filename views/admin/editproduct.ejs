@@ -209,7 +209,7 @@
 
                     hiddenImages.push(ImageSrc);
 
-                    console.log('Hidden Images:', hiddenImages);
+                   
 
                     const hiddenImagesString = JSON.stringify(hiddenImages);
 
@@ -223,7 +223,7 @@
                 var input = event.target;
                 var files = input.files
                 const isHave = files.length + (3 -hiddenImages.length)
-                console.log("files.length",files.length,"hiddenImages.length",hiddenImages.length)
+                
                 if(isHave !== 3){
                     Swal.fire({
                         title: `Please select ${3 - isHave} images..!`,

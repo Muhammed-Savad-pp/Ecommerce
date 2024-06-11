@@ -144,25 +144,20 @@
                                 <canvas id="myChart" style="width:100%;max-width:700px"></canvas>
                             </article>
                         </div>
-                        <!-- <div class="card mb-4">
-                            <article class="card-body">
 
-                                <select id="selectBoxCategory" style="width: 100px; height: 30px;">
-                                    <% category.forEach((val)=>{ %>
-                                        <option value="week"><%= val.name %></option>
-                                  
-                                  <%  }) %>
-                                    
-  
-
-                                </select>
-                                <canvas id="CategoryChart" style="width:100%;max-width:700px"></canvas>
-                            </article>
-                        </div> -->
 
                     </div>
-                  
 
+
+                </div>
+                <div class="row">
+                    <div class="col-xl-8 col-lg-12">
+                        <div class="card mb-4">
+                            <article class="card-body">
+                                <canvas id="categoryChart" style="width:100%;max-width:700px"></canvas>
+                            </article>
+                        </div>
+                    </div>
                 </div>
                 <div>
                     <div>
@@ -232,7 +227,7 @@
                 </div>
 
 
-
+               
 
 
             </section>
@@ -244,65 +239,101 @@
         <script src="/admin_assets/js/vendors/bootstrap.bundle.min.js"></script>
         <script src="/admin_assets/js/vendors/select2.min.js"></script>
         <script src="/admin_assets/js/vendors/perfect-scrollbar.js"></script>
-        <script src=/admin_assets/js/vendors/jquery.fullscreen.min.js"></script>
+        <script src="/admin_assets/js/vendors/jquery.fullscreen.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
         <!-- Main Script -->
         <script src="/admin_assets/js/main.js?v=1.1" type="text/javascript"></script>
 
-    <script>
-        document.getElementById('selectBox').addEventListener('change', function () {
-            const timePeriod = this.value;
+        <script>
+            document.getElementById('selectBox').addEventListener('change', function () {
+                const timePeriod = this.value;
 
-            var xValues, yValues;
-            if (timePeriod == 'week') {
-                xValues = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-                yValues = <%= JSON.stringify(week) %>;
-            } else if (timePeriod == 'month') {
-                xValues = ["Week 1", "Week 2", "Week 3", "Week 4"];
-                yValues = <%= JSON.stringify(month) %>;
-            } else {
-                xValues = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-                yValues = <%= JSON.stringify(year) %>;
-            }
-
-            updateChart(xValues, yValues);
-
-            let chart;
-
-            function updateChart(xValues, yValues) {
-                if (chart) {
-                    chart.data.labels = xValues;
-                    chart.data.datasets[0].data = yValues;
-                    chart.update();
+                var xValues, yValues;
+                if (timePeriod == 'week') {
+                    xValues = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+                    yValues = <%= JSON.stringify(week) %>;
+                } else if (timePeriod == 'month') {
+                    xValues = ["Week 1", "Week 2", "Week 3", "Week 4"];
+                    yValues = <%= JSON.stringify(month) %>;
                 } else {
-                    chart = new Chart("myChart", {
-                        type: "bar",
-                        data: {
-                            labels: xValues,
-                            datasets: [{
-                                backgroundColor: "blue",
-                                data: yValues
-                            }]
-                        },
-                        options: {
-                            legend: { display: false },
-                            title: {
-                                display: true,
-                                text: "Sales Data"
-                            }
-                        }
-                    });
+                    xValues = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                    yValues = <%= JSON.stringify(year) %>;
                 }
+
+                updateChart(xValues, yValues);
+
+                var chart;
+
+                function updateChart(xValues, yValues) {
+                    if (chart) {
+                        chart.data.labels = xValues;
+                        chart.data.datasets[0].data = yValues;
+                        chart.update();
+                    } else {
+                        chart = new Chart("myChart", {
+                            type: "bar",
+                            data: {
+                                labels: xValues,
+                                datasets: [{
+                                    backgroundColor: "blue",
+                                    data: yValues
+                                }]
+                            },
+                            options: {
+                                legend: { display: false },
+                                title: {
+                                    display: true,
+                                    text: "Sales Data"
+                                }
+                            }
+                        });
+                    }
+                }
+
+                updateChart(xValues, yValues);
+            });
+
+            document.getElementById('selectBox').dispatchEvent(new Event('change'));
+        </script>
+
+        
+    <script>
+        const categoryData = <%- JSON.stringify(categoryData) %>;
+
+        const xValues = categoryData.map(category => category.name);
+        const yValues = categoryData.map(category => category.count);
+
+        let categoryChart;
+
+        function updateCategoryChart(xValues, yValues) {
+            if (categoryChart) {
+                categoryChart.data.labels = xValues;
+                categoryChart.data.datasets[0].data = yValues;
+                categoryChart.update();
+            } else {
+                categoryChart = new Chart("categoryChart", {
+                    type: "bar",
+                    data: {
+                        labels: xValues,
+                        datasets: [{
+                            backgroundColor: "red",
+                            data: yValues
+                        }]
+                    },
+                    options: {
+                        legend: { display: false },
+                        title: {
+                            display: true,
+                            text: "Category Sales Data"
+                        }
+                    }
+                });
             }
+        }
 
-            // Initialize the chart with the default value
-            updateChart(xValues, yValues);
-        });
-
-        // Trigger change event to initialize the chart
-        document.getElementById('selectBox').dispatchEvent(new Event('change'));
+        updateCategoryChart(xValues, yValues);
     </script>
-
 
 
         <%- include("../adminLayouts/footer.ejs") %>

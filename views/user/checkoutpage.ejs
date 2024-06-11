@@ -7,9 +7,6 @@
                 background-color: #ecfdff;
 
             }
-
-
-
             .card {
                 box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .1), 0 1px 2px 0 rgba(0, 0, 0, .06);
             }
@@ -60,10 +57,8 @@
                 box-shadow: none !important;
             }
 
-            /* Modal styles */
             .modal {
                 display: none;
-                /* Hidden by default */
                 position: fixed;
                 z-index: 999;
                 left: 0;
@@ -73,7 +68,6 @@
                 overflow: auto;
                 background-color: rgba(0, 0, 0, 0.5);
 
-                /* Semi-transparent background */
             }
 
             .modal-content {
@@ -82,10 +76,8 @@
                 top: 50%;
                 transform: translate(-50%, -50%);
                 background-color: #fff;
-                /* margin: 15% auto; */
                 padding: 20px;
                 border: 5px;
-                /* width: 80%; */
                 max-width: 50%;
                 max-height: 80%;
                 overflow: auto;
@@ -99,7 +91,6 @@
                 cursor: pointer;
             }
 
-            /* Style the button inside the modal */
             .modal-content button {
                 padding: 10px 20px;
                 background-color: #007bff;
@@ -108,7 +99,6 @@
                 cursor: pointer;
             }
 
-            /* Close button hover effect */
             .modal-content button:hover {
                 background-color: #0056b3;
             }
@@ -127,7 +117,7 @@
                                         Have a coupon?
                                         <a href="#" id="couponToggle">Click here to enter your code</a>
                                         <div id="couponDetails" style="display: none; background-color: white;">
-                                            ajsdfasfnm
+                                            
                                             <% if(coupenData){ %>
                                                 <% coupenData.forEach(cou=>{ %>
                                                     <% if(cou.is_active==true){ %>
@@ -363,7 +353,6 @@
 
 
 
-            // JavaScript to handle radio button selection
             document.addEventListener('DOMContentLoaded', function () {
                 const paymentRadios = document.querySelectorAll('input[type="radio"][name="paymentMethod"]');
 
@@ -534,8 +523,8 @@
                                     icon: 'error',
                                     title: 'Error',
                                     text: 'Products is out of Stock, please remove product',
-                                    showConfirmButton: false, // Disable the confirm button
-                                    timer: 2000, // Display the alert for 3 seconds
+                                    showConfirmButton: false,
+                                    timer: 2000,
                                     timerProgressBar: true
 
                                 })
@@ -544,7 +533,7 @@
 
                         .catch(error => {
                             console.error('Fetch error:', error);
-                            // Handle fetch error
+                           
                         });
                 }
 
@@ -569,8 +558,8 @@
                                     icon: 'error',
                                     title: 'Error',
                                     text: 'Products is out of Stock, please remove product',
-                                    showConfirmButton: false, // Disable the confirm button
-                                    timer: 2000, // Display the alert for 3 seconds
+                                    showConfirmButton: false, 
+                                    timer: 2000, 
                                     timerProgressBar: true
 
                                 })
@@ -579,8 +568,8 @@
                                     icon: 'error',
                                     title: 'Error',
                                     text: 'Insufficient Balance',
-                                    showConfirmButton: false, // Disable the confirm button
-                                    timer: 2000, // Display the alert for 3 seconds
+                                    showConfirmButton: false, 
+                                    timer: 2000, 
                                     timerProgressBar: true
 
                                 })
@@ -589,7 +578,7 @@
 
                         .catch(error => {
                             console.error('Fetch error:', error);
-                            // Handle fetch error
+                            
                         });
                 }
 
@@ -607,9 +596,7 @@
                     })
                         .then(res => res.json())
                         .then(data => {
-                            console.log('Data from server:', data);
                             if (data.succes) {
-                                console.log('resopnse reached');
                                 let options = {
                                     "key": `${data.key_id}`,
                                     "amount": `${data.amount}`,
@@ -638,8 +625,7 @@
                         })
                 }
 
-                //document.addEventListener('DOMContentLoaded', () => {
-                // Payment method
+                
                 const paymentRadios = document.querySelectorAll('input[name="paymentMethod"]');
                 let paymentMethod = null;
 
@@ -727,10 +713,9 @@
             document.addEventListener('DOMContentLoaded', function () {
                 const toggleLink = document.getElementById('couponToggle');
                 const couponDetails = document.getElementById('couponDetails');
-                console.log('c',couponDetails);
 
                 toggleLink.addEventListener('click', function (e) {
-                    e.preventDefault(); // Prevent the default link behavior
+                    e.preventDefault(); 
                     couponDetails.style.display = (couponDetails.style.display === 'none') ? 'block' : 'none';
                 });
             });
@@ -759,8 +744,8 @@
                                 icon: 'error',
                                 title: 'Error',
                                 text: `Minimum Your Purchase Amount`,
-                                showConfirmButton: false, // Disable the confirm button
-                                timer: 2000, // Display the alert for 3 seconds
+                                showConfirmButton: false,
+                                timer: 2000, 
                                 timerProgressBar: true
 
                             })

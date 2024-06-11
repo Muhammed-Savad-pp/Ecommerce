@@ -99,9 +99,9 @@
           display.textContent = minutes + ":" + seconds;
 
           if (--timer < 0) {
-            clearInterval(intervalId); // Clear the interval when timer reaches 0
-            display.style.display = 'none'; // Hide the timer display
-            document.querySelector('.resend').style.display = 'block'; // Show the "Request again" link
+            clearInterval(intervalId); 
+            display.style.display = 'none'; 
+            document.querySelector('.resend').style.display = 'block'; 
           }
         }, 1000);
       }
@@ -145,8 +145,8 @@
                 icon: 'error',
                 title: 'error',
                 text: 'otp is incorrect',
-                showConfirmButton: false, // Disable the confirm button
-                timer: 1500, // Display the alert for 3 seconds
+                showConfirmButton: false, 
+                timer: 1500, 
                 timerProgressBar: true
 
               })

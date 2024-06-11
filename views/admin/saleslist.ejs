@@ -96,14 +96,14 @@
                             </select>
                             <button class="btn btn-success p-2" style="color: white;" onclick="change()">Change</button>
                         </div>
-                        <div class="col-md-6 col-4 d-flex  align-items-center">
+                        <div class="col-md-6 col-4 d-flex align-items-center">
                             <h4>Custom Date Range</h4>
-                            <p style="margin-left: 30px;">Start </p>
+                            <p style="margin-left: 30px;">Start</p>
                             <input id="startDateInput" style="margin-left: 10px;" type="date">
 
-                            <p style="margin-left: 30px;">End </p>
+                            <p style="margin-left: 30px;">End</p>
                             <input id="endDateInput" type="date" style="margin-left: 10px;">
-                            <button class="btn " style="background-color: green; color: white; margin-left: 15px;"
+                            <button class="btn" style="background-color: green; color: white; margin-left: 15px;"
                                 onclick="changeDate()">Change</button>
                         </div>
                     </div>
@@ -123,6 +123,7 @@
                                 <th>Product</th>
                                 <th>Price</th>
                                 <th>Qty</th>
+                                <th>Discount</th>
                                 <th>Total</th>
                             </tr>
                         </thead>
@@ -138,7 +139,8 @@
                                                 <%= val.paymentMethod %>
                                             </td>
                                             <td style="font-weight: 500;">
-                                                <%= val.currendDate.toLocaleDateString('en-US', { day: 'numeric' , month: 'short' , year: 'numeric' }) %>
+                                                <%= val.currendDate.toLocaleDateString('en-US', { day: 'numeric' ,
+                                                    month: 'short' , year: 'numeric' }) %>
                                             </td>
                                             <td style="font-weight: 500;">
                                                 <%= item.productId.pname %>
@@ -149,88 +151,91 @@
                                             <td style="font-weight: 500;">
                                                 <%= item.quantity %>
                                             </td>
+                                            <td>
+                                                <% if(val.discount>0){ %>
+                                                    <%= val.discount %>
+                                                        <% }else { %>
+                                                            -
+                                                            <% } %>
+
+
+                                            </td>
                                             <td style="font-weight: 500;">
                                                 <%= item.productId.price * item.quantity %>
                                             </td>
                                         </tr>
-                                    <% }) %>
-                                <% }) %>
-                            <% } else { %>
-                                <tr>
-                                    <td colspan="7" style="text-align: center; font-weight: 500;">No Orders</td>
-                                </tr>
-                            <% } %>
+                                        <% }) %>
+                                            <% }) %>
+                                                <% } else { %>
+                                                    <tr>
+                                                        <td colspan="7" style="text-align: center; font-weight: 500;">No
+                                                            Orders</td>
+                                                    </tr>
+                                                    <% } %>
                         </tbody>
-                        <% if(sales.length > 0) { %>
-                        <tfoot>
-                            <tr>
-                                <td colspan="6" style="text-align: right; font-weight: bold; font-size: 16px;">
-                                    Subtotal:
-                                </td>
-                                <td style="font-weight: bold; font-size: 16px;">
-                                    <%= subtotal %>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="6" style="text-align: right; font-weight: bold; font-size: 16px;">
-                                    Discount:
-                                </td>
-                                <td style="font-weight: bold; font-size: 16px;">
-                                    <%= discount %>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="6" style="text-align: right; font-weight: bold; font-size: 16px;">
-                                    Total:
-                                </td>
-                                <td style="font-weight: bold; font-size: 16px;">
-                                    <%= subtotal - discount %>
-                                </td>
-                            </tr>
-                        </tfoot>
-                        <% } %>
+                        <% if(sales.length> 0) { %>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="6" style="text-align: right; font-weight: bold; font-size: 16px;">
+                                        Subtotal:
+                                    </td>
+                                    <td style="font-weight: bold; font-size: 16px;">
+                                        <%= subtotal %>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="6" style="text-align: right; font-weight: bold; font-size: 16px;">
+                                        Discount:
+                                    </td>
+                                    <td style="font-weight: bold; font-size: 16px;">
+                                        <%= discount %>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="6" style="text-align: right; font-weight: bold; font-size: 16px;">
+                                        Total:
+                                    </td>
+                                    <td style="font-weight: bold; font-size: 16px;">
+                                        <%= subtotal - discount %>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                            <% } %>
                     </table>
                     <div style="margin-left: 800px;">
                         <button id="dwnld-exel-btn" class="btn " style="background-color: #535b58;">Exel</button>
-                        <button id="dwnld-pdf-btn" class="btn " style="background-color: #535b58; margin-left: 5px;">Pdf</button>
+                        <button id="dwnld-pdf-btn" class="btn "
+                            style="background-color: #535b58; margin-left: 5px;">Pdf</button>
                     </div>
                 </div>
-                
+                <ul class="pagination" style="margin-left: 200px; margin-top: 20px;">
+                    <% if (currentPage> 1) { %>
+                        <li class="page-item">
+                            <a class="page-link" href="/admin/salesreport?page=<%= currentPage - 1 %>"
+                                aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        <% } %>
+                            <% for (let i=1; i <=totalPages; i++) { %>
+                                <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                                    <a class="page-link" href="/admin/salesreport?page=<%= i %>">
+                                        <%= i %>
+                                    </a>
+                                </li>
+                                <% } %>
+                                    <% if (currentPage < totalPages) { %>
+                                        <li class="page-item">
+                                            <a class="page-link" href="/admin/salesreport?page=<%= currentPage + 1 %>"
+                                                aria-label="Next">
+                                                <span aria-hidden="true">&raquo;</span>
+                                            </a>
+                                        </li>
+                                    <% } %>
 
-
-
-
-
-
-                <div class="pagination-area mt-30 mb-50">
-                    <nav aria-label="Page navigation example">
-                        <ul class="pagination justify-content-start">
-                            <li class="page-item active"><a class="page-link" href="#">01</a></li>
-                            <li class="page-item"><a class="page-link" href="#">02</a></li>
-                            <li class="page-item"><a class="page-link" href="#">03</a></li>
-                            <li class="page-item"><a class="page-link dot" href="#">...</a></li>
-                            <li class="page-item"><a class="page-link" href="#">16</a></li>
-                            <li class="page-item">
-                                <a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
+                </ul>
             </section>
-            <!-- content-main end// -->
-            <footer class="main-footer font-xs">
-                <div class="row pb-30 pt-15">
-                    <div class="col-sm-6">
-                        <script>
-                            document.write(new Date().getFullYear());
-                        </script>
-                        &copy; Nest - HTML Ecommerce Template .
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="text-sm-end">All rights reserved</div>
-                    </div>
-                </div>
-            </footer>
+
         </main>
         <script src="assets/js/vendors/jquery-3.6.0.min.js"></script>
         <script src="assets/js/vendors/bootstrap.bundle.min.js"></script>
@@ -256,60 +261,98 @@
 
             }
 
+            document.addEventListener('DOMContentLoaded', function () {
+                const startDateInput = document.getElementById('startDateInput');
+                const endDateInput = document.getElementById('endDateInput');
+
+                const today = new Date().toISOString().split('T')[0];
+                startDateInput.max = today; 
+
+                startDateInput.addEventListener('change', function () {
+                    endDateInput.min = startDateInput.value; 
+                });
+
+                endDateInput.addEventListener('change', function () {
+                    if (endDateInput.value < startDateInput.value) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'error',
+                            text: `End date cannot be before start date`
+                        });
+                        endDateInput.value = '';
+                    }
+                });
+
+            });
+
 
             function changeDate() {
-
                 const startDate = document.getElementById('startDateInput').value;
                 const endDate = document.getElementById('endDateInput').value;
 
                 if (startDate && endDate) {
-                    window.location.href = `/admin/salesreport?startDate=${startDate}&endDate=${endDate}`;
-                }
+                    if (startDate >= endDate) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'error',
+                            text: `Start date cannot be today or in the future, and end date cannot be before start date.`
+                        });
 
+                    } else {
+                        window.location.href = `/admin/salesreport?startDate=${startDate}&endDate=${endDate}`;
+                    }
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'error',
+                        text: ` Please select both start and end dates.`
+                    });
+
+                }
             }
 
         </script>
 
-<script>
-    document.getElementById("dwnld-pdf-btn").addEventListener("click", function () {
-        let doc = new window.jspdf.jsPDF();
-        let pageCenter = doc.internal.pageSize.getWidth() / 2;
-        const reportType = document.getElementById('select').value;
+        <script>
+            document.getElementById("dwnld-pdf-btn").addEventListener("click", function () {
+                let doc = new window.jspdf.jsPDF();
+                let pageCenter = doc.internal.pageSize.getWidth() / 2;
+                const reportType = document.getElementById('select').value;
 
-        doc.setFontSize(25);
-        doc.text("Zakio.", pageCenter, 10, { align: 'center' });
-        doc.setFontSize(15);
+                doc.setFontSize(25);
+                doc.text("Zakio.", pageCenter, 10, { align: 'center' });
+                doc.setFontSize(15);
 
-        let table = document.querySelector(".table");
-        doc.autoTable({ html: table, startY: 35 });
+                let table = document.querySelector(".table");
+                doc.autoTable({ html: table, startY: 35 });
 
-        doc.save(`sales_report_${reportType}.pdf`);
-    });
+                doc.save(`sales_report_${reportType}.pdf`);
+            });
 
-    document.getElementById("dwnld-exel-btn").addEventListener("click", function () {
-        let workbook = XLSX.utils.book_new();
-        let table = document.querySelector(".table");
-        let worksheet = XLSX.utils.table_to_sheet(table);
+            document.getElementById("dwnld-exel-btn").addEventListener("click", function () {
+                let workbook = XLSX.utils.book_new();
+                let table = document.querySelector(".table");
+                let worksheet = XLSX.utils.table_to_sheet(table);
 
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Sales Report");
+                XLSX.utils.book_append_sheet(workbook, worksheet, "Sales Report");
 
-        let range = XLSX.utils.decode_range(worksheet['!ref']);
-        for (let C = range.s.c; C <= range.e.c; ++C) {
-            let max_width = 0;
-            for (let R = range.s.r; R <= range.e.r; ++R) {
-                let cell_address = { c: C, r: R };
-                let cell_ref = XLSX.utils.encode_cell(cell_address);
-                if (!worksheet[cell_ref]) continue;
-                let cell_width = XLSX.SSF.format(cell_address, worksheet[cell_ref].v).length;
-                max_width = Math.max(max_width, cell_width);
-            }
-            worksheet['!cols'] = worksheet['!cols'] || [];
-            worksheet['!cols'][C] = { wch: max_width + 1 };
-        }
+                let range = XLSX.utils.decode_range(worksheet['!ref']);
+                for (let C = range.s.c; C <= range.e.c; ++C) {
+                    let max_width = 0;
+                    for (let R = range.s.r; R <= range.e.r; ++R) {
+                        let cell_address = { c: C, r: R };
+                        let cell_ref = XLSX.utils.encode_cell(cell_address);
+                        if (!worksheet[cell_ref]) continue;
+                        let cell_width = XLSX.SSF.format(cell_address, worksheet[cell_ref].v).length;
+                        max_width = Math.max(max_width, cell_width);
+                    }
+                    worksheet['!cols'] = worksheet['!cols'] || [];
+                    worksheet['!cols'][C] = { wch: max_width + 1 };
+                }
 
-        XLSX.writeFile(workbook, "sales_report.xlsx", { bookSST: true, type: 'binary' });
-    });
-</script>
+                XLSX.writeFile(workbook, "sales_report.xlsx", { bookSST: true, type: 'binary' });
+            });
+        </script>
 
 
 

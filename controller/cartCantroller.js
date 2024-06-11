@@ -61,7 +61,6 @@ const addcart = async (req, res) => {
 
     const cart = await Cart.findOne({ userId: userid });
     const produt = await product.findOne({ _id: productId });
-    //console.log(produt,"produt");
 
     if (cart) {
       const ExistsCartProduct = await Cart.findOne({
@@ -99,13 +98,10 @@ const addcart = async (req, res) => {
 const updateQuantity = async (req, res) => {
   const userId = req.session.user_id;
   const { productId, quantity } = req.body;
-  console.log(productId, quantity, "hello");
   try {
     const products = await product.findById({ _id: productId });
-    console.log(products.quantity);
 
     if (!products) {
-      console.log("1");
       return res.status(404).json({ error: "Product not found" });
     }
 
@@ -129,8 +125,6 @@ const deleteproductfromcart = async (req, res) => {
     const userid = req.session.user_id;
     const productid = req.body.productId;
 
-    // console.log('userid', userid);
-    // console.log('productid', productid,typeof(productid) );
 
     await Cart.findOneAndUpdate(
       { userId: userid },
@@ -204,7 +198,7 @@ const checkQuantityInStock = async (req, res) => {
     if (carts) {
       for (const item of carts.product) {
         const product = item.productId;
-88
+        88;
         if (product.quantity <= 0) {
           outOfStockProducts.push(product.name);
         }
@@ -217,12 +211,10 @@ const checkQuantityInStock = async (req, res) => {
           .status(400)
           .json({ success: false, message: "No products in cart" });
       } else if (outOfStockProducts.length > 0) {
-        res
-          .status(400)
-          .json({
-            success: false,
-            message: "Products is out of Stock, please remove product",
-          });
+        res.status(400).json({
+          success: false,
+          message: "Products is out of Stock, please remove product",
+        });
       } else {
         res.json({ success: true });
       }
@@ -238,7 +230,7 @@ const AddAddressFromCheckout = async (req, res) => {
 
     const { name, city, district, state, country, mno, pincode } = req.body;
 
-    //console.log(name, city, district, state, country, mno, pincode);
+    
 
     const address = await Address.findOne({ userId: userid });
 
@@ -410,12 +402,10 @@ const orderProducts = async (req, res) => {
     }
 
     if (outOfStockProducts.length > 0) {
-      res
-        .status(400)
-        .json({
-          success: false,
-          message: "Products is out of Stock, please remove product",
-        });
+      res.status(400).json({
+        success: false,
+        message: "Products is out of Stock, please remove product",
+      });
     } else {
       const items = [];
 
@@ -461,59 +451,57 @@ const orderProducts = async (req, res) => {
       if (referedCode && firstOrder == undefined) {
         const CurrentUserWallet = await Wallet.findOne({ UserId: userid });
 
-        if(CurrentUserWallet){
+        if (CurrentUserWallet) {
           CurrentUserWallet.balance += 50;
           CurrentUserWallet.history.push({
             amount: 50,
             transactionType: "Referal",
           });
           await CurrentUserWallet.save();
-
-        }else{
+        } else {
           const currentuserwalet = new Wallet({
-            UserId:userid,
-            balance:50,
-            history:[{
-              amount:50,
-              transactionType: "Referal"
-            }]
-          })
+            UserId: userid,
+            balance: 50,
+            history: [
+              {
+                amount: 50,
+                transactionType: "Referal",
+              },
+            ],
+          });
 
-          await currentuserwalet.save()
+          await currentuserwalet.save();
         }
-
-        
 
         const referedUser = await user.findOne({ referlCode: referedCode });
         const referedUserWallet = await Wallet.findOne({
           UserId: referedUser._id,
         });
 
-        if(referedUserWallet){
+        if (referedUserWallet) {
           referedUserWallet.balance += 25;
           referedUserWallet.history.push({
             amount: 25,
             transactionType: "Referal",
           });
           await referedUserWallet.save();
-
-        }else{
+        } else {
           const wallet = new Wallet({
-            UserId:referedUser._id,
-            balance:25,
-            history:[{
-              amount:25,
-              transactionType: "Referal"
-            }]
-          })
+            UserId: referedUser._id,
+            balance: 25,
+            history: [
+              {
+                amount: 25,
+                transactionType: "Referal",
+              },
+            ],
+          });
 
-          await wallet.save()
+          await wallet.save();
         }
-      
-      } else {
-        console.log("not working");
       }
       await newOrder.save();
+
       req.session.minprice = null;
       req.session.discount = null;
       req.session.coupenCode = null;
@@ -528,7 +516,6 @@ const razorpayment = async (req, res) => {
   try {
     const users = await user.findOne({ _id: req.session.user_id });
     const amount = req.body.totalAmountInPaise;
-    console.log(amount);
 
     const options = {
       amount: amount,
@@ -583,12 +570,10 @@ const WalletOrderPayment = async (req, res) => {
     }
 
     if (outOfStockProducts.length > 0) {
-      res
-        .status(400)
-        .json({
-          success: false,
-          message: "Products is out of Stock, please remove product",
-        });
+      res.status(400).json({
+        success: false,
+        message: "Products is out of Stock, please remove product",
+      });
     } else {
       const items = [];
 
@@ -628,6 +613,63 @@ const WalletOrderPayment = async (req, res) => {
           orderId: orderid,
           discount: discountAmount,
         });
+
+        const firstOrder = await Order.findOne({ userId: userid });
+        const User = await user.findById(userid);
+        const referedCode = User.refered;
+
+        if (referedCode && firstOrder == undefined) {
+          const CurrentUserWallet = await Wallet.findOne({ UserId: userid });
+
+          if (CurrentUserWallet) {
+            CurrentUserWallet.balance += 50;
+            CurrentUserWallet.history.push({
+              amount: 50,
+              transactionType: "Referal",
+            });
+            await CurrentUserWallet.save();
+          } else {
+            const currentuserwalet = new Wallet({
+              UserId: userid,
+              balance: 50,
+              history: [
+                {
+                  amount: 50,
+                  transactionType: "Referal",
+                },
+              ],
+            });
+
+            await currentuserwalet.save();
+          }
+
+          const referedUser = await user.findOne({ referlCode: referedCode });
+          const referedUserWallet = await Wallet.findOne({
+            UserId: referedUser._id,
+          });
+
+          if (referedUserWallet) {
+            referedUserWallet.balance += 25;
+            referedUserWallet.history.push({
+              amount: 25,
+              transactionType: "Referal",
+            });
+            await referedUserWallet.save();
+          } else {
+            const wallet = new Wallet({
+              UserId: referedUser._id,
+              balance: 25,
+              history: [
+                {
+                  amount: 25,
+                  transactionType: "Referal",
+                },
+              ],
+            });
+
+            await wallet.save();
+          }
+        }
 
         await newOrder.save();
         req.session.minprice = null;

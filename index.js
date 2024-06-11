@@ -6,6 +6,7 @@ mongoose.connect(process.env.MONGO_URI)
 const port = process.env.PORT  
 
 
+const nocache = require('nocache')
 
 
 
@@ -13,6 +14,7 @@ const port = process.env.PORT
 const express = require('express')
 const app = express();
 
+app.use(nocache())
 
 
 const flash = require('express-flash')
@@ -24,7 +26,7 @@ app.use(flash())
 const path = require('path')
 
 app.use(express.static('public'))
-// app.set('views', path.join(__dirname, 'view/admin'));
+
 
 
 
@@ -46,11 +48,7 @@ const googleAuth = require('./googleAuth')
 
 app.use('/',googleAuth)
 
-        // facebook authentication
 
-const facebookAuth = require('./facebookAuth')
-
-app.use('/',facebookAuth)
 
 
 

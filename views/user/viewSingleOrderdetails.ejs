@@ -411,7 +411,6 @@
 
             function submitCancellation(orderId, productId) {
                 const selectedReason = document.getElementById('selectBox').value;
-                console.log(selectedReason, 'selectedReason');
 
                 Swal.fire({
                     title: `Are you sure?`,
@@ -540,7 +539,6 @@
                 let pageCenter = doc.internal.pageSize.getWidth() / 2;
 
                 let productId = document.getElementById("product-id").value;
-                console.log("productId:", productId)
 
                 doc.setFontSize(20);
                 doc.text("Zakio.", pageCenter, 8, { align: 'center' });

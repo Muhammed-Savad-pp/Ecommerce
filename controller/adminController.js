@@ -51,6 +51,14 @@ const loadDashbord = async(req,res)=>{
                 // top categories
         const topCategories = await Category.find().sort({count:-1}).limit(2)
 
+                // category chart
+        const Categroies = await Category.find()
+        const categoryData = Categroies.map(category =>({
+
+            name:category.name,
+            count:category.count
+
+        }))
 
         const weekSales = Array(7).fill(0);
         const monthSales = Array(4).fill(0);
@@ -58,28 +66,19 @@ const loadDashbord = async(req,res)=>{
 
         orderData.forEach(order => {
             const date = new Date(order.currendDate);
-            const day = date.getDay(); 
-            const month = date.getMonth(); 
-            const week = Math.floor(date.getDate() / 7); 
+            const day = date.getDay(); // 0-6 (Sunday-Saturday)
+            const month = date.getMonth(); // 0-11 (Jan-Dec)
+            const week = Math.floor(date.getDate() / 7); // Week of the month
             
+            // Calculate total amount per period
             weekSales[day] += order.totalAmount;
             monthSales[week] += order.totalAmount;
             yearSales[month] += order.totalAmount;
         });
 
-
-       
-
-        const category = await Category.find();
-
       
-
-
-     
-
-        
   
-        res.render('dashboard',{overolAmount, orderData, prodcutCount, topProducts, topCategories ,week:weekSales, month:monthSales, year:yearSales,category})
+        res.render('dashboard',{overolAmount, orderData, prodcutCount, topProducts, topCategories ,week:weekSales, month:monthSales, year:yearSales,categoryData:categoryData})
         
     } catch (error) {
         console.log(error.message);
@@ -99,17 +98,13 @@ const loginLoad = async(req,res)=>{
         console.log(error.message);
     }
 
-
 }
 
 const verifyLogin = async(req,res)=>{
    
-
     try {
-    
         
-        const {email, password } = req.body;
-        
+        const {email, password } = req.body;   
 
         const userData = await User.findOne({email:email})
 
@@ -158,14 +153,20 @@ const adminlogout = async(req,res)=>{
 
 }
 
-const 
-usersList = async(req,res)=>{
+const usersList = async(req,res)=>{
 
     try {
 
-        userData = await User.find({is_admin:false})
+        const page = parseInt(req.query.page) || 1;
+        const limit = 7;
+        const skip = (page-1) * limit;
 
-        res.render('userlist',{users:userData});
+        const totaluserData = await User.find({is_admin:false})
+
+        const userDatas = await User.find({is_admin:false}).skip(skip).limit(limit)
+
+
+        res.render('userlist',{users:userDatas,currentPage: page,totalPages:Math.ceil(totaluserData.length / limit)});
         
     } catch (error) {
         console.log(error)
@@ -177,13 +178,9 @@ const blockuser = async(req,res)=>{
 
     try {
 
-        const userId = req.query.userId;
-        //console.log(userId,'userid');
+        const userId = req.query.userId;        
         
-        
-        const user = await User.findOne({_id:userId});
-        //console.log(user,'useruser');
-        
+        const user = await User.findOne({_id:userId});        
         
         if(!user){
             res.status(404).send('User not found')
@@ -217,7 +214,6 @@ const categoryload = async(req,res)=>{
 
         CategoryDatas = await Category.find({is_blocked : false})
        
-        //console.log(CategoryDatas)
         res.render('categories',{categories:CategoryDatas})
     
         
@@ -249,7 +245,6 @@ const addcategory = async(req,res)=>{
             const categoryData = await category.save()
         }
         
-        //console.log(categoryData);
       
     } catch (error) {
         console.log(error.message);
@@ -262,9 +257,7 @@ const editCategoryload = async(req,res)=>{
 
          const errmsg = req.flash('errmsg')
         const id = req.query.id;
-        //console.log(id)
         const cateData = await Category.findOne({_id:id})
-        //console.log(cateData);
         if(cateData){
            
             res.render('categoryedit',{cateData:cateData,errmsg:errmsg})
@@ -336,7 +329,6 @@ const restoreCategory = async(req,res)=>{
     try {
         
         const id = req.query.id;
-        console.log(id);
         await Category.findByIdAndUpdate({_id:id},{$set:{is_blocked:false}})
         res.redirect("/admin/categories")
 
@@ -350,9 +342,14 @@ const loadProduct = async(req,res)=>{
 
     try {
 
-        const productsData = await Product.find().populate('category')
-        //console.log(productsData)
-        res.render('productlist',{productsDatas:productsData})
+        const page = parseInt(req.query.page) || 1;
+        const limit = 5;
+        const skip = (page-1) * limit;
+
+        const totalproductsData = await Product.find().populate('category')
+        const productsData = await Product.find().populate('category').skip(skip).limit(limit)
+
+        res.render('productlist',{productsDatas:productsData,currentPage: page,totalPages:Math.ceil(totalproductsData.length / limit)})
 
     } catch (error) {
         console.log(error.message);
@@ -380,9 +377,7 @@ const addProduct = async(req,res)=>{
         
         
         const {name,description,category,price,stock,} = req.body
-        // console.log(name);
-        // const excits = await Product.findOne({ pname: { $regex: new RegExp(`^${name}$`, 'i') } });
-        // console.log(excits);
+      
          const categoryId = await Category.findOne({name:category},{_id:1})
 
          const normalizedProductName = name.trim().toLowerCase();
@@ -393,23 +388,10 @@ const addProduct = async(req,res)=>{
             const existingProductName = existingProduct.pname.trim().toLowerCase();
 
             if (existingProductName === normalizedProductName) {
-                // Product name already exists
                 return res.render('addproduct', { message: 'Product name already exists' });
             }
         }
        
-
-        
-
-        
-
-        // if(excits){
-        //     res.render('addproduct',{message:'Product Name already excits'})
-        //     return false
-        // }
-
-
-
         let croppedimages  = [];
         let imagePath = [];
 
@@ -457,7 +439,6 @@ const unlistPorduct = async(req,res)=>{
     try {
         
         const id = req.query.id;
-        // console.log(id);
         await Product.findByIdAndUpdate({_id:id},{$set:{is_delete:true}});
         res.redirect('/admin/productlist')
 
@@ -527,9 +508,6 @@ const updateproducts = async(req,res)=>{
         croppedimages.push(...filteredImages);
         }
 
-        
-      
-
         const images = croppedimages.length > 0 ? croppedimages:productimages
 
         const productData = await Product.findByIdAndUpdate({_id:productid},{$set:{pname:req.body.name,description:req.body.description,category:req.body.category._id,price:req.body.price,quantity:req.body.stock,image:images,offerprice:null}})
@@ -552,9 +530,16 @@ const LoadOrders = async(req,res)=>{
 
     try {
         
-        const ordersData = await Order.find();
+        const page = parseInt(req.query.page) || 1;
+        const limit = 8;
+        const skip = (page-1) * limit;
+
+        const totalordersData = await Order.find();
+
+        const ordersData = await Order.find().sort({currendDate:-1}).skip(skip).limit(limit);
+
         
-        res.render('adminOrder',{ordersData:ordersData})
+        res.render('adminOrder',{ordersData:ordersData,currentPage: page,totalPages:Math.ceil(totalordersData.length / limit)})
 
     } catch (error) {
         console.log(error.message);
@@ -568,9 +553,7 @@ const loadOrderDetailPage = async(req,res)=>{
         
 
         const orderid = req.query.id;
-        //console.log(orderid);
         const orderData = await Order.findOne({orderId:orderid}).populate('items.productId');
-        //console.log(orderData);
         res.render('orderDetailPage',{orderData:orderData})
 
     } catch (error) {
@@ -587,13 +570,7 @@ const changeStatus = async(req,res)=>{
         const orderId = req.body.orderId;
         const productId = req.body.productId;
         const status = req.body.status
-
-        console.log('productId',productId);
-       console.log('orderId',orderId);
-       console.log('status',status);
-
-
-        
+       
         const cancelData = await Order.findOneAndUpdate(
                 {orderId:orderId,'items.productId':productId},
 
@@ -631,14 +608,12 @@ const approveReturnProduct = async (req, res) => {
         if (approveData) {
             let totalprice = 0;
 
-            // Calculate total price for returned items
             approveData.items.forEach(item => {
                 if (item.productId.equals(productid)) {
                     totalprice += item.price * item.quantity;
                 }
             });
 
-            // Update product quantity if reason is not 'Defective or Damaged Product'
             const reasons = approveData.items.find(item => item.productId.equals(productid));
             const { reason, quantity } = reasons;
 
@@ -652,11 +627,10 @@ const approveReturnProduct = async (req, res) => {
 
             const userid = approveData.userId;
 
-            // Update wallet balance and push transaction to history
             const walletData = await Wallet.findOneAndUpdate(
                 { UserId: userid },
                 {
-                    $inc: { balance: totalprice }, // Increment balance by totalprice
+                    $inc: { balance: totalprice }, 
                     $push: {
                         history: {
                             amount: totalprice,
@@ -680,11 +654,9 @@ const declineReturnProduct = async(req,res)=>{
 
     try {
 
-        console.log('asdasd');
         const orderid = req.body.orderId;
         const productid = req.body.productId;
-        // console.log('orderid',orderid);
-        // console.log('productid',productid);
+       
 
         const declineData = await Order.findOneAndUpdate({orderId:orderid,'items.productId':productid},{$set:{approvel:3}},{new:true})
 
@@ -727,7 +699,6 @@ const loadAddCoupen = async(req,res)=>{
 const addCoupens = async(req,res)=>{
 
     try {
-        console.log('adfsdfsd');
       
         const code = req.body.code;
         const description = req.body.description;
@@ -800,11 +771,7 @@ const editcoupesSubmit = async(req,res)=>{
             }},{new:true})
 
             res.json({success:true})
-        }
-
-         
-
-       
+        }    
 
     } catch (error) {
         console.log(error.message);
@@ -891,9 +858,6 @@ const addCategoryOffer = async(req,res)=>{
             const categoryname = req.body.category;
             const discount = req.body.discount;
             const date = req.body.date
-
-            console.log(categoryname,discount,date);
-
 
             const exicts = await CategoryOffer.findOne({categoryId:categoryname})
 
@@ -1142,11 +1106,7 @@ const updateProductOffer = async(req,res)=>{
         await ProductOffer.findByIdAndUpdate(id,{$set:{ProductId:productid,offer:discount,validity:date}},{new:true})
         res.json({success:true})
        }
-            
-        
-          
-        
-        
+                
     } catch (error) {
         console.log(error.message);
     }
@@ -1175,7 +1135,13 @@ const LoadSalesReport = async (req, res) => {
 
     try {
 
+        const page = parseInt(req.query.page) || 1;
+        const limit = 5;
+        const skip = (page-1) * limit;
+
         const { type, date ,startDate, endDate } = req.query;
+
+        const totalSales = await Order.find().populate('items.productId');
        
 
         let sales;
@@ -1192,7 +1158,7 @@ const LoadSalesReport = async (req, res) => {
                     $gte: today,
                     $lt: new Date(today.getTime() + 24 * 60 * 60 * 1000)
                 }
-            }).populate('address').populate('items.productId');
+            }).sort({currendDate:-1}).skip(skip).limit(limit).populate('items.productId');
 
             sales.forEach(val =>{
                 val.items.forEach(item =>{
@@ -1220,7 +1186,7 @@ const LoadSalesReport = async (req, res) => {
                     $gte: lastWeekStart,
                     $lte: lastWeekEnd
                 }
-            }).populate('address').populate('items.productId');
+            }).sort({currendDate:-1}).skip(skip).limit(limit).populate('items.productId');
 
             sales.forEach(val =>{
                 val.items.forEach(item =>{
@@ -1245,7 +1211,7 @@ const LoadSalesReport = async (req, res) => {
                     $gte: lastMonthStart,
                     $lte: lastMonthEnd
                 }
-            }).populate('address').populate('items.productId');
+            }).sort({currendDate:-1}).skip(skip).limit(limit).populate('items.productId');
 
             sales.forEach(val =>{
                 val.items.forEach(item =>{
@@ -1270,7 +1236,7 @@ const LoadSalesReport = async (req, res) => {
                     $gte: thisYearStart,
                     $lt: thisYearEnd
                 }
-            }).populate('address').populate('items.productId');
+            }).sort({currendDate:-1}).skip(skip).limit(limit).populate('items.productId');
 
             sales.forEach(val =>{
                 val.items.forEach(item =>{
@@ -1293,7 +1259,7 @@ const LoadSalesReport = async (req, res) => {
                     $gte: start,
                     $lte: end
                 }
-            }).populate('address').populate('items.productId');
+            }).sort({currendDate:-1}).skip(skip).limit(limit).populate('items.productId');
 
             sales.forEach(val => {
                 val.items.forEach(item => {
@@ -1308,7 +1274,7 @@ const LoadSalesReport = async (req, res) => {
         } else {
 
             
-            sales = await Order.find().populate('address').populate('items.productId');
+            sales = await Order.find().sort({currendDate:-1}).skip(skip).limit(limit).populate('items.productId');
 
             sales.forEach(val =>{
                 val.items.forEach(item =>{
@@ -1321,7 +1287,7 @@ const LoadSalesReport = async (req, res) => {
             })
         }
 
-        res.render('saleslist', { sales,subtotal ,discount});
+        res.render('saleslist', { sales,subtotal ,discount ,currentPage: page,totalPages:Math.ceil(totalSales.length / limit)});
     } catch (error) {
         console.error('Error in LoadSalesReport:', error);
         res.status(500).send('Internal Server Error');

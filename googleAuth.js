@@ -2,9 +2,10 @@ const express = require('express');
 const axios = require('axios');
 const router = express.Router();
 const User = require('./model/user_model')
+require('dotenv').config()
 
-const CLIENT_ID = '1040764869704-3cgfjbv73p12d7e866co58sbvt1lo5u8.apps.googleusercontent.com'
-const CLIENT_SECRET = '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'
+const CLIENT_ID = process.env.CLIENT_ID
+const CLIENT_SECRET = process.env.CLIENT_SECRET
 const REDIRECT_URI = 'http://zakio.online/auth/google/callback'
 
 router.get('/auth/google', (req, res) => {
@@ -34,6 +35,17 @@ router.get('/auth/google/callback', async (req, res) => {
         headers: { Authorization: `Bearer ${access_token}` },
       });
 
+      function generateRandomString(length) {
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+        let result = '';
+        const charactersLength = characters.length;
+        
+        for (let i = 0; i < length; i++) {
+          result += characters.charAt(Math.floor(Math.random() * charactersLength));
+        }
+        
+        return result;
+      }
 
       const exitcsUser = await User.findOne({email:profile.email})
 
@@ -44,7 +56,8 @@ router.get('/auth/google/callback', async (req, res) => {
             email:profile.email,
             name:profile.name,
             password:profile.id,
-            is_blocked:false
+            is_blocked:false,
+            referlCode:generateRandomString(6)
         })
 
         await user.save();

@@ -1,13 +1,14 @@
 <%- include("../adminLayouts/header.ejs") %>
 
-<%- include("../adminLayouts/sidenavbar.ejs") %>
+    <%- include("../adminLayouts/sidenavbar.ejs") %>
         <main class="main-wrap">
             <header class="main-header navbar">
                 <div class="col-search">
                     <form class="searchform">
                         <div class="input-group">
                             <input list="search_terms" type="text" class="form-control" placeholder="Search term" />
-                            <button class="btn btn-light bg" type="button"><i class="material-icons md-search"></i></button>
+                            <button class="btn btn-light bg" type="button"><i
+                                    class="material-icons md-search"></i></button>
                         </div>
                         <datalist id="search_terms">
                             <option value="Products"></option>
@@ -18,7 +19,8 @@
                     </form>
                 </div>
                 <div class="col-nav">
-                    <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"><i class="material-icons md-apps"></i></button>
+                    <button class="btn btn-icon btn-mobile me-auto" data-trigger="#offcanvas_aside"><i
+                            class="material-icons md-apps"></i></button>
                     <ul class="nav">
                         <li class="nav-item">
                             <a class="nav-link btn-icon" href="#">
@@ -27,30 +29,44 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link btn-icon darkmode" href="#"> <i class="material-icons md-nights_stay"></i> </a>
+                            <a class="nav-link btn-icon darkmode" href="#"> <i
+                                    class="material-icons md-nights_stay"></i> </a>
                         </li>
                         <li class="nav-item">
-                            <a href="#" class="requestfullscreen nav-link btn-icon"><i class="material-icons md-cast"></i></a>
+                            <a href="#" class="requestfullscreen nav-link btn-icon"><i
+                                    class="material-icons md-cast"></i></a>
                         </li>
                         <li class="dropdown nav-item">
-                            <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownLanguage" aria-expanded="false"><i class="material-icons md-public"></i></a>
+                            <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownLanguage"
+                                aria-expanded="false"><i class="material-icons md-public"></i></a>
                             <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownLanguage">
-                                <a class="dropdown-item text-brand" href="#"><img src="assets/imgs/theme/flag-us.png" alt="English" />English</a>
-                                <a class="dropdown-item" href="#"><img src="assets/imgs/theme/flag-fr.png" alt="Français" />Français</a>
-                                <a class="dropdown-item" href="#"><img src="assets/imgs/theme/flag-jp.png" alt="Français" />日本語</a>
-                                <a class="dropdown-item" href="#"><img src="assets/imgs/theme/flag-cn.png" alt="Français" />中国人</a>
+                                <a class="dropdown-item text-brand" href="#"><img src="assets/imgs/theme/flag-us.png"
+                                        alt="English" />English</a>
+                                <a class="dropdown-item" href="#"><img src="assets/imgs/theme/flag-fr.png"
+                                        alt="Français" />Français</a>
+                                <a class="dropdown-item" href="#"><img src="assets/imgs/theme/flag-jp.png"
+                                        alt="Français" />日本語</a>
+                                <a class="dropdown-item" href="#"><img src="assets/imgs/theme/flag-cn.png"
+                                        alt="Français" />中国人</a>
                             </div>
                         </li>
                         <li class="dropdown nav-item">
-                            <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount" aria-expanded="false"> <img class="img-xs rounded-circle" src="assets/imgs/people/avatar-2.png" alt="User" /></a>
+                            <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount"
+                                aria-expanded="false"> <img class="img-xs rounded-circle"
+                                    src="assets/imgs/people/avatar-2.png" alt="User" /></a>
                             <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount">
-                                <a class="dropdown-item" href="#"><i class="material-icons md-perm_identity"></i>Edit Profile</a>
-                                <a class="dropdown-item" href="#"><i class="material-icons md-settings"></i>Account Settings</a>
-                                <a class="dropdown-item" href="#"><i class="material-icons md-account_balance_wallet"></i>Wallet</a>
+                                <a class="dropdown-item" href="#"><i class="material-icons md-perm_identity"></i>Edit
+                                    Profile</a>
+                                <a class="dropdown-item" href="#"><i class="material-icons md-settings"></i>Account
+                                    Settings</a>
+                                <a class="dropdown-item" href="#"><i
+                                        class="material-icons md-account_balance_wallet"></i>Wallet</a>
                                 <a class="dropdown-item" href="#"><i class="material-icons md-receipt"></i>Billing</a>
-                                <a class="dropdown-item" href="#"><i class="material-icons md-help_outline"></i>Help center</a>
+                                <a class="dropdown-item" href="#"><i class="material-icons md-help_outline"></i>Help
+                                    center</a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item text-danger" href="#"><i class="material-icons md-exit_to_app"></i>Logout</a>
+                                <a class="dropdown-item text-danger" href="#"><i
+                                        class="material-icons md-exit_to_app"></i>Logout</a>
                             </div>
                         </li>
                     </ul>
@@ -60,127 +76,91 @@
                 <div class="content-header">
                     <div>
                         <h2 class="content-title card-title">Offer Product</h2>
-                        
+
                     </div>
                     <div>
-                       
+
                         <a href="/admin/addproductOffer" class="btn btn-primary btn-sm rounded">Add Product Offer</a>
                     </div>
                 </div>
-                    <header class="card-header">
-                        <div class="row align-items-center">
-                            
-                            <div class="col-md-3 col-12 me-auto mb-md-0 mb-3" style="width: 70px;">
-                                <select class="form-select">
-                                    <option selected>All category</option>
-                                    <option>Electronics</option>
-                                    <option>Clothes</option>
-                                    <option>Automobile</option>
-                                </select>
-                            </div>
-                            
-                            <div class="col-md-2 col-6">
-                                <select class="form-select">
-                                    <option selected>Status</option>
-                                    <option>Active</option>
-                                    <option>Disabled</option>
-                                    <option>Show all</option>
-                                </select>
-                            </div>
-                        </div>
-                    </header>
-                    
-                    
-                        
-                            <div class="table-responsive">
-                                <table class="table table-hover">
-                                    <thead>
-                                        <tr style="background-color: #306450; color: white;">
-                                            <th>Sl.No</th>
-                                            <th>ProductName</th>
-                                            <th>Discount(%)</th>
-                                            <th>ExpiryDate</th>
-                                            <th>Activation</th>
-                                            <th>ACTION</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    
-                                        <% offer.forEach((pro, ind) =>{ %>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr style="background-color: #306450; color: white;">
+                                <th>Sl.No</th>
+                                <th>ProductName</th>
+                                <th>Discount(%)</th>
+                                <th>ExpiryDate</th>
+                                <th>Activation</th>
+                                <th>ACTION</th>
+                            </tr>
+                        </thead>
+                        <tbody>
 
-                                            <tr>
+                            <% offer.forEach((pro, ind)=>{ %>
 
-                                                <td><%= ind+1 %></td>
-                                                <td><%= pro.ProductId.pname %></td>
-                                                <td><%= pro.offer %></td>
-                                                <td><%= pro.validity.toLocaleDateString('en-US', { day: 'numeric' , month: 'short' ,year: 'numeric' }) %></td>
-                                                <td><% if(pro.activation == true ){ %>
+                                <tr>
 
-                                                    <button onclick="diactive('<%= pro._id %>')" style="background-color: rgb(212, 215, 46); color: white; border: none; height: 25px;" >Active</button>
+                                    <td>
+                                        <%= ind+1 %>
+                                    </td>
+                                    <td>
+                                        <%= pro.ProductId.pname %>
+                                    </td>
+                                    <td>
+                                        <%= pro.offer %>
+                                    </td>
+                                    <td>
+                                        <%= pro.validity.toLocaleDateString('en-US', { day: 'numeric' , month: 'short'
+                                            ,year: 'numeric' }) %>
+                                    </td>
+                                    <td>
+                                        <% if(pro.activation==true ){ %>
 
-                                                    <% } else { %>
+                                            <button onclick="diactive('<%= pro._id %>')"
+                                                style="background-color: rgb(212, 215, 46); color: white; border: none; height: 25px;">Active</button>
 
-                                                        <button onclick="active('<%= pro._id %>')" style="background-color:red; color: white; border: none; height: 25px;" >DiActive</button>
+                                            <% } else { %>
 
-                                                    <% } %>
-                                                </td>
-                                                <td>
-                                                    <a href="/admin/editproductOffer?id=<%= pro._id %>"><button  style="background-color: green; color: white; border: none; height: 25px; margin-right: 10px;" >Edit</button></a>
-                                                    <button onclick="delet('<%= pro._id %>')" style="background-color: red; color: white; border: none; height: 25px;" >Delete</button>
-                                                </td>
-                                            </tr>
+                                                <button onclick="active('<%= pro._id %>')"
+                                                    style="background-color:red; color: white; border: none; height: 25px;">DiActive</button>
 
-                                        <% }) %>
+                                                <% } %>
+                                    </td>
+                                    <td>
+                                        <a href="/admin/editproductOffer?id=<%= pro._id %>"><button
+                                                style="background-color: green; color: white; border: none; height: 25px; margin-right: 10px;">Edit</button></a>
+                                        <button onclick="delet('<%= pro._id %>')"
+                                            style="background-color: red; color: white; border: none; height: 25px;">Delete</button>
+                                    </td>
+                                </tr>
+
+                                <% }) %>
+
+                                    <% if(offer.length <=0){ %>
+
+                                        <td>
+                                            <p style="font-size: 18px; ">No Offers</p>
+
+                                        </td>
 
 
-                                    </tbody>
+                                        <% } %>
 
-                                </table>
-                                
-                                
-                            </div>
-                            
-                        
-                            
-                        
-                        
-                    
-                   
-                <div class="pagination-area mt-30 mb-50">
-                    <nav aria-label="Page navigation example">
-                        <ul class="pagination justify-content-start">
-                            <li class="page-item active"><a class="page-link" href="#">01</a></li>
-                            <li class="page-item"><a class="page-link" href="#">02</a></li>
-                            <li class="page-item"><a class="page-link" href="#">03</a></li>
-                            <li class="page-item"><a class="page-link dot" href="#">...</a></li>
-                            <li class="page-item"><a class="page-link" href="#">16</a></li>
-                            <li class="page-item">
-                                <a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a>
-                            </li>
-                        </ul>
-                    </nav>
+                        </tbody>
+
+                    </table>
+
+
                 </div>
             </section>
-            <!-- content-main end// -->
-            <footer class="main-footer font-xs">
-                <div class="row pb-30 pt-15">
-                    <div class="col-sm-6">
-                        <script>
-                            document.write(new Date().getFullYear());
-                        </script>
-                        &copy; Nest - HTML Ecommerce Template .
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="text-sm-end">All rights reserved</div>
-                    </div>
-                </div>
-            </footer>
+
         </main>
 
         <script>
 
-                    // delect
-            function delet(id){
+            // delect
+            function delet(id) {
 
                 Swal.fire({
                     title: `Are you sure?`,
@@ -198,7 +178,7 @@
                                 'Content-Type': 'application/json'
                             },
                             body: JSON.stringify({
-                                id:id
+                                id: id
                             })
                         })
                             .then(response => response.json())
@@ -212,12 +192,12 @@
                 })
 
             }
-       
+
 
             // diactive 
 
-            function diactive(id){
-            Swal.fire({
+            function diactive(id) {
+                Swal.fire({
                     title: `Diactive this offer`,
                     icon: 'question',
                     showCancelButton: true,
@@ -233,7 +213,7 @@
                                 'Content-Type': 'application/json'
                             },
                             body: JSON.stringify({
-                                id:id
+                                id: id
                             })
                         })
                             .then(response => response.json())
@@ -245,14 +225,14 @@
 
                     }
                 })
-        }
-       
+            }
+
 
             // active
-       
 
-            function active(id){
-            Swal.fire({
+
+            function active(id) {
+                Swal.fire({
                     title: `Active this offer`,
                     icon: 'question',
                     showCancelButton: true,
@@ -268,7 +248,7 @@
                                 'Content-Type': 'application/json'
                             },
                             body: JSON.stringify({
-                                id:id
+                                id: id
                             })
                         })
                             .then(response => response.json())
@@ -280,11 +260,11 @@
 
                     }
                 })
-        }
-       
-       </script>
+            }
 
-      
+        </script>
+
+
         <script src="assets/js/vendors/jquery-3.6.0.min.js"></script>
         <script src="assets/js/vendors/bootstrap.bundle.min.js"></script>
         <script src="assets/js/vendors/select2.min.js"></script>
@@ -296,4 +276,4 @@
 
 
 
-<%- include("../adminLayouts/footer.ejs")  %>
+        <%- include("../adminLayouts/footer.ejs") %>

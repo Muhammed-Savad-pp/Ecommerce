@@ -2,6 +2,30 @@
     <%- include("../layouts/navbar.ejs") %>
 
         <style>
+            /* Common styles */
+            .sidebar {
+                width: 250px;
+                /* Fixed width for sidebar */
+                height: 100vh;
+                /* Full height */
+
+            }
+
+            .navbar {
+                height: 70px;
+                /* Fixed height for navbar */
+
+                color: white;
+            }
+
+            /* Media queries for responsiveness */
+            @media screen and (max-width: 768px) {
+                .sidebar {
+                    width: 100%;
+                    /* Full width on smaller screens */
+                }
+            }
+
             body {
                 margin-top: 80px;
                 color: #1a202c;
@@ -89,47 +113,46 @@
                 font-size: 20px;
 
             }
-
-            
         </style>
 
 
 
 
-        <div class="container">
+        <div class="container-fluid">
             <div class="main-body">
-                <div class="row gutters-sm">
-                    <div class="col-md-4 mb-3">
+                <div class="row ">
+                    <div class="col-md-3 sidebar" style="padding-right: 10px;">
                         <div class="card">
                             <div class="card-body">
                                 <div class="d-flex flex-column align-items-center text-center">
                                     <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Admin"
                                         class="rounded-circle" width="150">
-                                        <div class="mt-3">
-                                            <h4>
-                                                <%= userdata.name %>
-                                            </h4>
-                                            <br>
-                                            <br>
-                                            <a href="/userprofile"><button class="buttons"><i style="margin-right: 7px;"
-                                                        class="fa-solid fa-user"></i>Account Details</button></a>
-                                            <a href="/orderDetails"><button class="buttons" ><i
-                                                    style="margin-right: 7px;" class="fas fa-cart-plus"></i>Orders</button></a>
-                                            <a href="/userAddress"><button style="background-color: rgb(94, 120, 206);" class="buttons"><i style="margin-right: 7px;"
-                                                        class="fa-solid fa-address-book"></i>Address</button></a>
-                                            <a href="/wallet"><button class="buttons"><i style="margin-right: 7px;"
+                                    <div class="mt-3">
+                                        <h4>
+                                            <%= userdata.name %>
+                                        </h4>
+                                        <br>
+                                        <br>
+                                        <a href="/userprofile"><button class="buttons"><i style="margin-right: 7px;"
+                                                    class="fa-solid fa-user"></i>Account Details</button></a>
+                                        <a href="/orderDetails"><button class="buttons"><i style="margin-right: 7px;"
+                                                    class="fas fa-cart-plus"></i>Orders</button></a>
+                                        <a href="/userAddress"><button style="background-color: rgb(94, 120, 206);"
+                                                class="buttons"><i style="margin-right: 7px;"
+                                                    class="fa-solid fa-address-book"></i>Address</button></a>
+                                        <a href="/wallet"><button class="buttons"><i style="margin-right: 7px;"
                                                     class="fa-solid fa-wallet"></i>Wallet</button></a>
-                                            <a href="/userlogout"><button class="buttons"><i style="margin-right: 7px;"
-                                                        class="fa-solid fa-right-from-bracket"></i>Logout</button></a>
-                                        </div>
+                                        <a href="/userlogout"><button class="buttons"><i style="margin-right: 7px;"
+                                                    class="fa-solid fa-right-from-bracket"></i>Logout</button></a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
                     </div>
 
-                    <div class="col-md-8 ">
-                        <div style="margin-left: 540px;">
+                    <div class="col-md-9 ">
+                        <div style="margin-left: 200px;">
                             <a href="/addAddress"><button class="genric-btn">Add Address</button></a>
 
                         </div>
@@ -138,7 +161,7 @@
                             <% if(addressData && addressData.address && addressData.address.length> 0){ %>
                                 <% for(let i=0; i < addressData.address.length; i++){ %>
 
-                                    <div class="col-md-6 mb-3 justify-content-center  ">
+                                    <div class="col-md-4 mb-3 justify-content-center  ">
                                         <div class="card  ">
                                             <div class="card-body">
                                                 <h2 style="color: rgb(174, 37, 37);">Address <%= i+1 %>
@@ -174,10 +197,9 @@
                                                 <br>
 
                                                 <a href="/editaddress?id=<%= addressData.address[i]._id  %>"><button
-                                                    style="border: none; color: white; background-color: rgb(77, 201, 77);"
-                                                    >Edit
-                                                </button></a>
-                                                
+                                                        style="border: none; color: white; background-color: rgb(77, 201, 77);">Edit
+                                                    </button></a>
+
                                                 <button onclick="delecte('<%=addressData.address[i]._id %>')"
                                                     style="border: none; color: white; background-color: red;">Delete
                                                 </button>
@@ -197,14 +219,14 @@
             </div>
         </div>
 
-        
+
 
 
         <script src="/js/script.js"></script>
 
         <script>
 
-           
+
 
 
 
@@ -224,18 +246,18 @@
                 }).then((result) => {
                     if (result.isConfirmed) {
                         fetch(`/delecteaddress?id=${id}`)
-                        .then(respone => respone.json())
-                        .then(data => {
+                            .then(respone => respone.json())
+                            .then(data => {
 
                                 if (data.success) {
 
                                     window.location.reload()
                                     //$('#main-id').load('/userAddress #main-id' )
                                 }
-                        })
-                        .catch(error =>{
-                            console.log('fecth error',error);
-                        })
+                            })
+                            .catch(error => {
+                                console.log('fecth error', error);
+                            })
                     }
                 })
             }

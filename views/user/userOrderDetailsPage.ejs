@@ -179,7 +179,7 @@
                             <% if(orderDatas.length> 0){ %>
 
 
-                                <% orderDatas.reverse().forEach(i=> { %>
+                                <% orderDatas.forEach(i=> { %>
 
 
                                     <div class="col-md-12"
@@ -258,19 +258,43 @@
                                                     <% }); %>
                                                         <% } %>
                         </div>
+                        
                     </div>
+                    <ul class="pagination" style="margin-left: 200px; margin-top: 20px;">
+                            <% if (currentPage > 1) { %>
+                                <li class="page-item">
+                                    <a class="page-link" href="/orderDetails?page=<%= currentPage - 1 %>" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                            <% } %>
+                            <% for (let i = 1; i <= totalPages; i++) { %>
+                                <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                                    <a class="page-link" href="/orderDetails?page=<%= i %>"><%= i %></a>
+                                </li>
+                            <% } %>
+                            <% if (currentPage < totalPages) { %>
+                                <li class="page-item">
+                                    <a class="page-link" href="/orderDetails?page=<%= currentPage + 1 %>" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            <% } %>
+                        
+                    </ul>
+                    
+            
                 </div>
             </div>
         </div>
-
+        
         <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 
         <script>
 
             function cancelorder(orderId, productId) {
-                // console.log(orderId, 'orderid');
-                // console.log(productId, 'productid');
+         
 
                 Swal.fire({
                     title: `Are you sure?`,
@@ -346,9 +370,7 @@
                 })
                     .then(res => res.json())
                     .then(data => {
-                        console.log('Data from server:', data);
                         if (data.succes) {
-                            console.log('resopnse reached');
                             let options = {
                                 "key": `${data.key_id}`,
                                 "amount": `${data.amount}`,

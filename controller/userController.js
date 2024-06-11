@@ -38,7 +38,6 @@ const loadHome = async(req,res)=>{
 
     try {
         const userid = req.session.user_id
-        //console.log('userid',userid);
 
         const products = await product.find({is_delete:false})
 

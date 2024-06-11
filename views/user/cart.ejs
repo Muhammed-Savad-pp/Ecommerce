@@ -1,7 +1,7 @@
 <%- include("../layouts/header.ejs") %>
   <%- include("../layouts/navbar.ejs") %>
 
-    <section class="breadcrumb breadcrumb_bg">
+    <section class="breadcrumb breadcrumb_bg" style="background-color: #ecfdff;">
       <div class="container">
         <div class="row justify-content-center">
           <div class="col-lg-8">
@@ -360,7 +360,6 @@
           confirmButtonText: "Yes"
         }).then((result) => {
           if (result.isConfirmed) {
-            // Call fetch to send POST request with productId
             fetch('/deletecartproduct', {
               method: 'POST',
               headers: {
@@ -369,19 +368,18 @@
               body: JSON.stringify({ productId })
             }).then(response => response.json())
               .then(data => {
-                console.log('rgga');
                 if (data.success) {
                   console.log('Product deletion successful');
-                  // Optionally update the UI or reload the cart view
-                  location.reload(); // Reload the current page
+                 
+                  location.reload(); 
                 } else {
                   console.log('Product deletion failed');
-                  // Handle error or display message to the user
+                  
                 }
               })
               .catch(error => {
                 console.error('Fetch error:', error);
-                // Handle fetch error
+                
               });
           }
         });

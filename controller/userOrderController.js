@@ -10,10 +10,17 @@ const LoadOrderDatails = async(req,res)=> {
 
     try {
 
+        const page = parseInt(req.query.page) || 1;
+        const limit = 3;
+        const skip = (page-1) * limit;
+
         const userid = req.session.user_id;
         const userdata = await User.findOne({_id:userid})
 
-        const orderdata = await Order.find({userId:userid}).populate('items.productId')
+        const Totalorderdata = await Order.find({userId:userid}).populate('items.productId')
+
+        const orderdata = await Order.find({userId:userid}).populate('items.productId').sort({currendDate:-1}).skip(skip).limit(limit)
+
 
         const carts = await Cart.findOne({ userId: userid }).populate("product.productId");
         const cartsdata = carts ? carts.product : [];
@@ -21,7 +28,7 @@ const LoadOrderDatails = async(req,res)=> {
         const wishilist = await Wishilist.findOne({userId:userid}).populate('items.productId')
         const wishilistData = wishilist ? wishilist.items : [];
 
-        res.render('userOrderDetailsPage',{userdata:userdata,orderDatas:orderdata,cartsdata, wishilistData})
+        res.render('userOrderDetailsPage',{userdata:userdata,orderDatas:orderdata,cartsdata, wishilistData,currentPage: page,totalPages:Math.ceil(Totalorderdata.length / limit)})
         
     } catch (error) {
         console.log(error.message);
@@ -34,7 +41,6 @@ const LoadSingleOrderDeatails = async(req,res) =>{
         
         const userid = req.session.user_id;
         const orderid = req.query.id;
-        //console.log('orderid',orderid);
         const orderData = await Order.findOne({userId:userid,orderId:orderid}).populate('items.productId')
         const userData = await User.findById({_id:userid})
 
@@ -44,7 +50,6 @@ const LoadSingleOrderDeatails = async(req,res) =>{
         const wishilist = await Wishilist.findOne({userId:userid}).populate('items.productId')
         const wishilistData = wishilist ? wishilist.items : [];
         
-        //console.log(orderData);
         res.render('viewSingleOrderdetails',{orderData:orderData, userData:userData,cartsdata,wishilistData})
 
     } catch (error) {
@@ -119,12 +124,7 @@ const cancelorder = async(req,res)=>{
                     await data.save()
                     res.status(200).json({success:true})
                 }
-
-
-            }
-           
-
-
+            }          
             res.status(200).json({success:true})
 
         }
@@ -144,10 +144,6 @@ const returnOrder = async(req,res)=>{
         const productId = req.body.productId;
         const selectedReason = req.body.selectedReason;
 
-        // console.log('orderId',orderId);
-        // console.log('productId',productId);
-        // console.log('selectedReason',selectedReason);
-
         const returnData = await Order.findOneAndUpdate(
             {orderId:orderId,'items.productId':productId},
             {$set:{'items.$[item].reason':selectedReason,approvel:1}},
@@ -158,7 +154,6 @@ const returnOrder = async(req,res)=>{
         )
 
         if(returnData){
-            console.log('success');
             res.status(200).json({success:true})
         }
 

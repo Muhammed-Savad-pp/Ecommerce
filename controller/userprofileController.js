@@ -32,10 +32,8 @@ const LoadUserProfile = async(req,res)=>{
     try {
         
         const userid = req.session.user_id;
-        //console.log(userid);
 
         const userdata = await User.findOne({_id:userid})
-        //console.log(userdata);
 
         const carts = await Cart.findOne({ userId: userid }).populate("product.productId");
         const cartsdata = carts ? carts.product : [];
@@ -82,18 +80,13 @@ const updateUserPassword =async(req,res)=>{
         
         const userid = req.session.user_id;
         const { oldPassword, newPassword } = req.body;
-        //console.log(oldPassword,newPassword);
 
         const userdata = await User.findOne({_id:userid});
-
-        
-
 
         const passwordmatch = await bcrypt.compare(oldPassword,userdata.password)
 
         if(oldPassword === newPassword){
 
-            console.log('new pASSWORD Old password is same');
             return  res.status(404).json({success:false})
             
 
@@ -106,7 +99,6 @@ const updateUserPassword =async(req,res)=>{
 
  
             const updatepassword = await User.findOneAndUpdate({_id:userid},{$set:{password:spassword}})
-            //console.log(updatepassword);
             return res.status(200).json({success:true})
 
         }else{
@@ -173,7 +165,6 @@ const addadress = async(req,res)=>{
 
         const {name, city, district, state, country, mno, pincode} = req.body
 
-        //console.log(name, city, district, state, country, mno, pincode);
 
         const address = await Address.findOne({userId:userid})
 
@@ -365,7 +356,6 @@ const LoadWallet = async(req,res)=>{
         console.log(error.message);
     }
 
-
 }
 
 const LoadAddMoney = async(req,res)=>{
@@ -532,28 +522,46 @@ const withdrawMoneyFromWallet = async(req,res)=>{
 
 }
 
-const LoadWalletTransaction = async(req,res)=>{
-
+const LoadWalletTransaction = async (req, res) => {
     try {
-        
+        const page = parseInt(req.query.page) || 1;
+        const limit = 4;
+        const skip = (page - 1) * limit;
+
         const userid = req.session.user_id;
         const userdata = await User.findById(userid);
-        const wallet = await Wallet.findOne({UserId:userid}).populate('history')
-        console.log(wallet,'walee');
+
+        const totalwallet = await Wallet.findOne({ UserId: userid });
+        const totalTransactions = totalwallet.history.length;
+
+        const sortedHistory = totalwallet.history.sort((a, b) => b.date - a.date);
+        const paginatedHistory = sortedHistory.slice(skip, skip + limit);
+
+        const wallet = {
+            ...totalwallet.toObject(),
+            history: paginatedHistory
+        };
 
         const carts = await Cart.findOne({ userId: userid }).populate("product.productId");
         const cartsdata = carts ? carts.product : [];
 
-        const wishilist = await Wishilist.findOne({userId:userid}).populate('items.productId')
+        const wishilist = await Wishilist.findOne({ userId: userid }).populate('items.productId');
         const wishilistData = wishilist ? wishilist.items : [];
 
-        res.render('walletTransaction',{userdata,wallet,cartsdata,wishilistData})
+        res.render('walletTransaction', {
+            userdata,
+            wallet,
+            cartsdata,
+            wishilistData,
+            currentPage: page,
+            totalPages: Math.ceil(totalTransactions / limit)
+        });
 
     } catch (error) {
         console.log(error.message);
     }
-
 }
+
 
 
 
